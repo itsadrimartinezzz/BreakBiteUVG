@@ -29,7 +29,11 @@ fun SignUpScreen(
     onContinueUvg: () -> Unit,
     onContinueService: () -> Unit,
     onGoToLogin: () -> Unit,
-    onGoogle: () -> Unit
+    onGoogle: () -> Unit,
+    // 🔽 nuevos (opcionales) para integrar validación externa y loading
+    uvgError: String? = null,
+    serviceError: String? = null,
+    isProcessing: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +60,7 @@ fun SignUpScreen(
                 append("Ingresa tu correo de la\nuniversidad para registrarte en\n")
                 withStyle(
                     style = SpanStyle(
-                        color = Color(0xFF1B5E20), // verde
+                        color = Color(0xFF1B5E20),
                         fontWeight = FontWeight.SemiBold
                     )
                 ) {
@@ -76,13 +80,21 @@ fun SignUpScreen(
             placeholder = "tucorreo@uvg.edu.gt",
             modifier = Modifier.fillMaxWidth()
         )
+        if (!uvgError.isNullOrBlank()) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = uvgError,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(Modifier.height(10.dp))
 
         PrimaryButton(
-            text = "Continuar",
+            text = if (isProcessing) "Procesando..." else "Continuar",
             onClick = onContinueUvg,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(16.dp))
@@ -94,13 +106,21 @@ fun SignUpScreen(
             placeholder = "correoempresa@empresa.ejemplo",
             modifier = Modifier.fillMaxWidth()
         )
+        if (!serviceError.isNullOrBlank()) {
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = serviceError,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(Modifier.height(10.dp))
 
         PrimaryButton(
-            text = "Continuar como Servicio",
+            text = if (isProcessing) "Procesando..." else "Continuar como Servicio",
             onClick = onContinueService,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(12.dp))
@@ -125,7 +145,7 @@ fun SignUpScreen(
 private fun PreviewSignUpScreen() {
     var uvg by remember { mutableStateOf("") }
     var service by remember { mutableStateOf("") }
-    
+
     SignUpScreen(
         uvgEmail = uvg,
         onUvgEmailChange = { uvg = it },
@@ -134,18 +154,9 @@ private fun PreviewSignUpScreen() {
         onContinueUvg = {},
         onContinueService = {},
         onGoToLogin = {},
-        onGoogle = {}
+        onGoogle = {},
+        uvgError = "Usa tu correo @uvg.edu.gt",
+        serviceError = null,
+        isProcessing = false
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-

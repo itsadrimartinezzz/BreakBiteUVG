@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.grupo6.breakbiteuvg.R
+import com.grupo6.breakbiteuvg.ui.navegation.UserTab
+
 
 private val BannerGreen = Color(0xFF2E584A)
 
@@ -45,8 +47,8 @@ fun BottomBarUser(
         containerColor = BannerGreen
     ) {
         NavigationBarItem(
-            selected = selected == UserTab.HOME,
-            onClick = { onTabChange(UserTab.HOME) },
+            selected = selected == UserTab.Home,
+            onClick = { onTabChange(UserTab.Home) },
             icon = { androidx.compose.material3.Icon(Icons.Default.ShoppingCart, contentDescription = "Inicio") },
             label = { Text("Inicio", color = Color.White) },
             colors = NavigationBarItemDefaults.colors(
@@ -58,8 +60,8 @@ fun BottomBarUser(
             )
         )
         NavigationBarItem(
-            selected = selected == UserTab.HISTORY,
-            onClick = { onTabChange(UserTab.HISTORY) },
+            selected = selected == UserTab.History,
+            onClick = { onTabChange(UserTab.History) },
             icon = { androidx.compose.material3.Icon(Icons.Default.Menu, contentDescription = "Historial") },
             label = { Text("Historial", color = Color.White) },
             colors = NavigationBarItemDefaults.colors(
@@ -71,8 +73,8 @@ fun BottomBarUser(
             )
         )
         NavigationBarItem(
-            selected = selected == UserTab.PROFILE,
-            onClick = { onTabChange(UserTab.PROFILE) },
+            selected = selected == UserTab.Profile,
+            onClick = { onTabChange(UserTab.Profile) },
             icon = { androidx.compose.material3.Icon(Icons.Default.Person, contentDescription = "Perfil") },
             label = { Text("Perfil", color = Color.White) },
             colors = NavigationBarItemDefaults.colors(
@@ -215,7 +217,7 @@ private fun PreviewUserHomeScreen() {
     UserHomeScreen(
         services = mock,
         onOpenService = {},
-        selectedTab = UserTab.HOME,
+        selectedTab = UserTab.Home,
         onTabChange = {}
     )
 }

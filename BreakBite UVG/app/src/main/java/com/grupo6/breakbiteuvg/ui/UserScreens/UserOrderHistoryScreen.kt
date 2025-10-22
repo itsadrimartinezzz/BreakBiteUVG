@@ -17,6 +17,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.res.painterResource
 import com.grupo6.breakbiteuvg.R
+import com.grupo6.breakbiteuvg.ui.navegation.UserTab
+
 
 private val BannerGreen = Color(0xFF2E584A)
 
@@ -152,7 +154,7 @@ fun PreviewUserOrderHistoryScreen() {
     UserOrderHistoryScreen(
         orders = mockOrders,
         onOpenOrderDetail = {},
-        selectedTab = UserTab.HISTORY,
+        selectedTab = UserTab.History,
         onTabChange = {}
     )
 }

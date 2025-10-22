@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.grupo6.breakbiteuvg.ui.navegation.UserTab
+
 
 private val BannerGreen = Color(0xFF2E584A)
 
@@ -128,7 +130,7 @@ private fun PreviewUserProfileScreen() {
     UserProfileScreen(
         userName = "Nombre de Usuario",
         userEmail = "tucorreo@uvg.edu.gt",
-        selectedTab = UserTab.PROFILE,
+        selectedTab = UserTab.Profile,
         onTabChange = {},
         onLogout = {},
         onNotifications = {}
