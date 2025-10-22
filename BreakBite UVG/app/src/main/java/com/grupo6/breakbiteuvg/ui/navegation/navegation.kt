@@ -108,23 +108,24 @@ fun AppNav() {
             when (selectedTab) {
                 UserTab.Home -> {
                     UserHomeScreen(
-                        services = emptyList(),                 // sin data por ahora
+                        services = emptyList(),
                         onOpenService = { /* no-op */ },
                         selectedTab = selectedTab,
-                        onTabChange = { selectedTab = it }      // cambia entre Home/Orders/Profile
+                        onTabChange = { selectedTab = it }
                     )
                 }
-                UserTab.Orders -> {
+
+                // ✅ Soporta ambos enum names: Orders o History
+                UserTab.Orders,
+                UserTab.History -> {
                     UserOrderHistoryScreen(
-                        orders = emptyList(),                 // TODO: conecta tu lista real
-                        onOpenOrderDetail = { orderId ->
-                            // Si ya tienes destino de detalle, descomenta:
-                            // nav.navigate(OrderDetailDestination(orderId))
-                        },
+                        orders = emptyList(), // TODO: datos reales
+                        onOpenOrderDetail = { /* nav a detalle si tienes destino */ },
                         selectedTab = selectedTab,
-                        onTabChange = { selectedTab = it }    // <- volver a Home/Profile desde Orders
+                        onTabChange = { selectedTab = it }
                     )
                 }
+
                 UserTab.Profile -> {
                     UserProfileScreen(
                         userName = userName,
@@ -141,10 +142,11 @@ fun AppNav() {
                         onNotifications = { /* no-op */ }
                     )
                 }
-                // si tu enum tiene más tabs (p. ej. Notifications),
-                // agrégalas aquí o deja un else:
-                else -> {
-                    Text("Sección no implementada", modifier = Modifier.padding(24.dp))
+
+                // (opcional) si existe Notifications en tu enum:
+                UserTab.Notifications -> {
+                    // TODO: tu pantalla de notificaciones
+                    // Text("Notificaciones", modifier = Modifier.padding(24.dp))
                 }
             }
         }
