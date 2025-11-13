@@ -48,6 +48,9 @@ data class ServiceInfo(
 @Composable
 fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
+    var isDarkMode by rememberSaveable { mutableStateOf(false) }
+
+
     val nav = rememberNavController()
     var userName by rememberSaveable { mutableStateOf("Usuario") }
     var userEmail by rememberSaveable { mutableStateOf("usuario@uvg.edu.gt") }
