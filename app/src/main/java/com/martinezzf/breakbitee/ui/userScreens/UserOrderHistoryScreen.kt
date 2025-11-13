@@ -1,6 +1,7 @@
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,7 +28,11 @@ fun UserOrderHistoryScreen(
     selectedTab: UserTab,
     onTabChange: (UserTab) -> Unit
 ) {
+    // 🎨 Verdes institucionales (solo para acento)
+    val BannerGreen = Color(0xFF2E584A)
+    val LightGreen = Color(0xFF497766)
     val colors = MaterialTheme.colorScheme
+    val isDark = isSystemInDarkTheme()
 
     Scaffold(
         containerColor = colors.background,
@@ -68,7 +74,7 @@ fun UserOrderHistoryScreen(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     items(orders) { order ->
-                        OrderCard(order, allItems, onOpenOrderDetail)
+                        OrderCard(order, allItems, onOpenOrderDetail, BannerGreen, LightGreen, colors, isDark)
                     }
                 }
             }
@@ -80,15 +86,18 @@ fun UserOrderHistoryScreen(
 private fun OrderCard(
     order: OrderUi,
     allItems: List<UserOrderItemUi>,
-    onOpenOrderDetail: (OrderUi) -> Unit
+    onOpenOrderDetail: (OrderUi) -> Unit,
+    BannerGreen: Color,
+    LightGreen: Color,
+    colors: ColorScheme,
+    isDark: Boolean
 ) {
-    val colors = MaterialTheme.colorScheme
     val restaurantItems = allItems.filter { it.id.startsWith(order.serviceName) }
 
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = colors.surface,
-        tonalElevation = 1.dp,
+        tonalElevation = 2.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -117,7 +126,7 @@ private fun OrderCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         order.status,
-                        color = colors.primary,
+                        color = if (isDark) LightGreen else BannerGreen,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     )
@@ -129,7 +138,7 @@ private fun OrderCard(
                 Text(
                     "Q${order.totalQ}",
                     fontWeight = FontWeight.Bold,
-                    color = colors.onSurface
+                    color = if (isDark) LightGreen else BannerGreen
                 )
             }
 
@@ -166,13 +175,16 @@ private fun OrderCard(
 
                             Text(
                                 text = "Q${producto.priceQ * cantidad}",
-                                color = colors.primary,
+                                color = if (isDark) LightGreen else BannerGreen,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
 
-                    Divider(color = colors.outlineVariant, modifier = Modifier.padding(vertical = 4.dp))
+                    Divider(
+                        color = colors.outlineVariant,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -182,7 +194,7 @@ private fun OrderCard(
                         Text(
                             text = "Q${restaurantItems.sumOf { it.priceQ }}",
                             fontWeight = FontWeight.Bold,
-                            color = colors.primary
+                            color = if (isDark) LightGreen else BannerGreen
                         )
                     }
                 }
@@ -190,6 +202,7 @@ private fun OrderCard(
 
             Spacer(Modifier.height(12.dp))
 
+            // 🟢 Botón "Ver Pedido"
             Button(
                 onClick = { onOpenOrderDetail(order) },
                 modifier = Modifier
@@ -197,8 +210,8 @@ private fun OrderCard(
                     .height(45.dp),
                 shape = RoundedCornerShape(24.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.primary,
-                    contentColor = colors.onPrimary
+                    containerColor = if (isDark) LightGreen else BannerGreen,
+                    contentColor = Color.White
                 )
             ) {
                 Text("Ver Pedido", fontWeight = FontWeight.SemiBold)

@@ -1,8 +1,6 @@
 package com.martinezzf.breakbitee.ui.userScreens
 
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -22,15 +21,20 @@ import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.ProductDetailUi
 import com.martinezzf.breakbitee.data.ProductParameterUi
 
-private val BannerGreen = Color(0xFF2E584A)
-private val CardBg = Color(0xFFF2F4F5)
-
 @Composable
 fun UserProductScreen(
     product: ProductDetailUi,
     onBack: () -> Unit,
     onAddToOrder: (ProductDetailUi) -> Unit
 ) {
+    // 🎨 Colores base (verdes institucionales)
+    val BannerGreen = Color(0xFF2E584A)
+    val LightGreen = Color(0xFF497766)
+
+    // 🎨 Colores dinámicos del tema actual
+    val colors = MaterialTheme.colorScheme
+    val isDark = isSystemInDarkTheme()
+
     var quantity by remember { mutableIntStateOf(1) }
 
     val expandedMap = remember(product.id) {
@@ -58,17 +62,19 @@ fun UserProductScreen(
     }
 
     Scaffold(
+        containerColor = colors.background,
         bottomBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (isDark) LightGreen.copy(alpha = 0.2f) else LightGreen)
                     .padding(horizontal = 16.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                // Contador de cantidad
                 Surface(
                     shape = RoundedCornerShape(999.dp),
-                    color = Color.Black
+                    color = if (isDark) BannerGreen.copy(alpha = 0.8f) else BannerGreen
                 ) {
                     Row(
                         modifier = Modifier
@@ -80,12 +86,14 @@ fun UserProductScreen(
                         Text(
                             text = "-",
                             color = Color.White,
+                            style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.clickable { if (quantity > 1) quantity-- }
                         )
                         Text("$quantity", color = Color.White)
                         Text(
                             text = "+",
                             color = Color.White,
+                            style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.clickable { quantity++ }
                         )
                     }
@@ -93,17 +101,19 @@ fun UserProductScreen(
 
                 Spacer(Modifier.width(12.dp))
 
+                // Botón principal verde
                 Button(
-                    onClick = {
-                        onAddToOrder(product)
-                    },
+                    onClick = { onAddToOrder(product) },
                     modifier = Modifier
                         .height(46.dp)
                         .weight(1f),
                     shape = RoundedCornerShape(24.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BannerGreen)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDark) LightGreen else BannerGreen,
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Agregar a la orden", color = Color.White)
+                    Text("Agregar a la orden", fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -115,20 +125,20 @@ fun UserProductScreen(
                     top = padding.calculateTopPadding(),
                     bottom = padding.calculateBottomPadding()
                 )
+                .background(colors.background)
         ) {
-
+            // Imagen superior del producto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(BannerGreen)
+                    .height(240.dp)
             ) {
                 AsyncImage(
                     model = product.imageUrl,
                     contentDescription = product.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
+                        .matchParentSize()
                         .clip(
                             RoundedCornerShape(
                                 bottomStart = 20.dp,
@@ -137,9 +147,26 @@ fun UserProductScreen(
                         )
                 )
 
+                // Gradiente inferior para contraste con el texto
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    colors.background.copy(alpha = 0.9f)
+                                )
+                            )
+                        )
+                )
+
+                // Botón de regresar
                 IconButton(
                     onClick = onBack,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.TopStart)
                 ) {
                     Icon(
                         Icons.Filled.ArrowBack,
@@ -149,13 +176,13 @@ fun UserProductScreen(
                 }
             }
 
+            // Información del restaurante
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 AsyncImage(
                     model = when (product.serviceName) {
                         "Cafe Barista" -> "https://media.licdn.com/dms/image/v2/C4D0BAQG0iaY0mTFOtg/company-logo_200_200/company-logo_200_200/0/1676502742315/caf_barista_logo?e=2147483647&v=beta&t=RdzwCEyGJJeYckb8KiViPVjlcNdx3t6eEXkxJXe_9g0"
@@ -168,40 +195,50 @@ fun UserProductScreen(
                         else -> ""
                     },
                     contentDescription = product.serviceName,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(28.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFF1D3B31)),
-                    contentScale = ContentScale.Crop
+                        .background(colors.surfaceVariant)
                 )
 
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = product.serviceName,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isDark) LightGreen else BannerGreen
                 )
             }
 
+            // Información principal del producto
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     product.name,
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = colors.onBackground
                 )
+
                 if (product.description.isNotBlank()) {
                     Spacer(Modifier.height(6.dp))
-                    Text(product.description)
+                    Text(
+                        product.description,
+                        color = colors.onSurfaceVariant
+                    )
                 }
+
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "Q$totalQ",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isDark) LightGreen else BannerGreen
                 )
             }
 
             Spacer(Modifier.height(12.dp))
 
+            // Parámetros del producto
             product.parameters.forEach { param ->
                 ParameterBlock(
                     parameter = param,
@@ -209,7 +246,11 @@ fun UserProductScreen(
                     onToggleExpand = {
                         expandedMap[param.id] = !(expandedMap[param.id] ?: true)
                     },
-                    selectedMap = selectedMap
+                    selectedMap = selectedMap,
+                    isDark = isDark,
+                    BannerGreen = BannerGreen,
+                    LightGreen = LightGreen,
+                    colors = colors
                 )
             }
 
@@ -223,7 +264,11 @@ private fun ParameterBlock(
     parameter: ProductParameterUi,
     isExpanded: Boolean,
     onToggleExpand: () -> Unit,
-    selectedMap: MutableMap<String, Boolean>
+    selectedMap: MutableMap<String, Boolean>,
+    isDark: Boolean,
+    BannerGreen: Color,
+    LightGreen: Color,
+    colors: ColorScheme
 ) {
     Column(
         modifier = Modifier
@@ -240,11 +285,13 @@ private fun ParameterBlock(
                 text = parameter.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                color = if (isDark) LightGreen else BannerGreen,
                 modifier = Modifier.weight(1f)
             )
             Icon(
                 imageVector = if (isExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                contentDescription = null
+                contentDescription = null,
+                tint = if (isDark) LightGreen else BannerGreen
             )
         }
 
@@ -252,7 +299,7 @@ private fun ParameterBlock(
             Spacer(Modifier.height(8.dp))
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = CardBg
+                color = colors.surfaceVariant.copy(alpha = if (isDark) 0.4f else 0.2f)
             ) {
                 Column(Modifier.padding(vertical = 6.dp)) {
                     parameter.options.forEach { opt ->
@@ -267,13 +314,22 @@ private fun ParameterBlock(
                         ) {
                             Checkbox(
                                 checked = selectedMap[opt.id] == true,
-                                onCheckedChange = { selectedMap[opt.id] = it }
+                                onCheckedChange = { selectedMap[opt.id] = it },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = if (isDark) LightGreen else BannerGreen,
+                                    uncheckedColor = colors.outline
+                                )
                             )
+
                             val label = buildString {
                                 append(opt.label)
                                 if (opt.priceDeltaQ != 0) append(" (+Q${opt.priceDeltaQ})")
                             }
-                            Text(label)
+
+                            Text(
+                                label,
+                                color = colors.onSurface
+                            )
                         }
                     }
                 }

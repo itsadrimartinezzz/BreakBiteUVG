@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,9 @@ fun UserOrderDetailScreen(
     data: UserOrderDetailUi,
     onBack: () -> Unit
 ) {
+    // 🎨 Verde institucional personalizado
+    val BannerGreen = Color(0xFF2E584A)      // Verde oscuro (antes azul)
+    val LightGreen = Color(0xFF497766)       // Verde medio para botones, acentos
 
     val colors = MaterialTheme.colorScheme
 
@@ -47,7 +51,7 @@ fun UserOrderDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(72.dp)
-                    .background(colors.primary),
+                    .background(BannerGreen),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(
@@ -60,13 +64,13 @@ fun UserOrderDetailScreen(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Regresar",
-                            tint = colors.onPrimary
+                            tint = Color.White
                         )
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = "Detalle del pedido",
-                        color = colors.onPrimary,
+                        color = Color.White,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -87,8 +91,8 @@ fun UserOrderDetailScreen(
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.primary,
-                        contentColor = colors.onPrimary
+                        containerColor = BannerGreen,
+                        contentColor = Color.White
                     )
                 ) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = null)
@@ -108,8 +112,7 @@ fun UserOrderDetailScreen(
                 )
                 .background(colors.background)
         ) {
-
-            // TARJETA PRINCIPAL
+            // 🟩 TARJETA PRINCIPAL
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = colors.surface,
@@ -136,7 +139,7 @@ fun UserOrderDetailScreen(
                     Column(Modifier.weight(1f)) {
                         Text(
                             data.status,
-                            color = colors.primary,
+                            color = BannerGreen,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
@@ -158,43 +161,41 @@ fun UserOrderDetailScreen(
                 }
             }
 
-            // LISTA DE ITEMS
+            // 🟢 LISTA DE ITEMS
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
                 if (data.items.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No hay productos en este pedido", color = colors.onSurfaceVariant)
+                        Text(
+                            "No hay productos en este pedido",
+                            color = colors.onSurfaceVariant
+                        )
                     }
-
                 } else {
                     data.items.forEach { item ->
-
                         Surface(
                             shape = RoundedCornerShape(16.dp),
                             color = colors.surfaceVariant,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-
                             Row(
                                 modifier = Modifier.padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-
                                 AsyncImage(
                                     model = item.imageUrl,
                                     contentDescription = item.name,
                                     modifier = Modifier
                                         .size(56.dp)
                                         .clip(RoundedCornerShape(12.dp))
-                                        .background(colors.outlineVariant),
+                                        .background(LightGreen.copy(alpha = 0.2f)),
                                     contentScale = ContentScale.Crop
                                 )
 
