@@ -170,13 +170,15 @@ private fun ServiceCard(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
     ) {
+        // 🖼 Fondo con AsyncImage (para agregar imagen de fondo)
         AsyncImage(
-            model = service.imageUrl,
-            contentDescription = service.name,
+            model = service.bannerUrl, // puedes cambiar la URL según necesites
+            contentDescription = "${service.name} background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
 
+        // Sombra oscura para mejorar contraste
         Box(
             modifier = Modifier
                 .matchParentSize()
@@ -189,12 +191,14 @@ private fun ServiceCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Logo cuadrado del restaurante (mantiene su posición)
             AsyncImage(
-                model = service.bannerUrl,
+                model = service.imageUrl,
                 contentDescription = "${service.name} logo",
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(12.dp))

@@ -34,14 +34,14 @@ import androidx.compose.runtime.compositionLocalOf
 
 val LocalAllItems = compositionLocalOf { listOf<UserOrderItemUi>() }
 
-
 data class ServiceInfo(
     val id: String,
     val name: String,
     val displayName: String,
     val tag: String,
     val logoUrl: String,
-    val password: String
+    val password: String,
+    val backgroundUrl: String = "" // 👈 nuevo campo para el fondo
 )
 
 @SuppressLint("SimpleDateFormat")
@@ -49,7 +49,6 @@ data class ServiceInfo(
 fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
-
 
     val nav = rememberNavController()
     var userName by rememberSaveable { mutableStateOf("Usuario") }
@@ -59,7 +58,6 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
     var allItems by remember { mutableStateOf(mutableListOf<UserOrderItemUi>()) }
     var notifications by remember { mutableStateOf(listOf<UserNotification>()) }
 
-
     val servicesInfo = remember {
         listOf(
             ServiceInfo(
@@ -68,7 +66,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Barista",
                 tag = "Edif. F – UVG",
                 logoUrl = "https://media.licdn.com/dms/image/v2/C4D0BAQG0iaY0mTFOtg/company-logo_200_200/company-logo_200_200/0/1676502742315/caf_barista_logo?e=2147483647&v=beta&t=RdzwCEyGJJeYckb8KiViPVjlcNdx3t6eEXkxJXe_9g0",
-                password = "barista123"
+                password = "barista123",
+                backgroundUrl = "https://www.prensalibre.com/wp-content/uploads/2018/09/Cafe-barista-portada.png?quality=52"
             ),
             ServiceInfo(
                 id = "2",
@@ -76,7 +75,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "&Cafe",
                 tag = "Edif. T – UVG",
                 logoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTHCi3JodBohfzg0Cr5tQ_Z9nlZuLo58XNDg&s",
-                password = "elcafe123"
+                password = "elcafe123",
+                backgroundUrl = "https://andcafe.com/media/k2/items/cache/2fa67f482133f1c934235b73c2a03954_M.jpg?t=20220418_183154"
             ),
             ServiceInfo(
                 id = "3",
@@ -84,7 +84,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Gitane",
                 tag = "Edif. S – UVG",
                 logoUrl = "https://pedidosya.dhmedia.io/image/pedidosya/restaurants/cafe-gitane.png",
-                password = "gitane123"
+                password = "gitane123",
+                backgroundUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNeJaVfchBpvb1M__tBKHT_QkZOQNgHdpDw&s"
             ),
             ServiceInfo(
                 id = "4",
@@ -92,7 +93,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Gogreen",
                 tag = "Edif. D – UVG",
                 logoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4lqfr6uvS-Bm6YAaHyaUfXcqjEw2HSYB15g&s",
-                password = "gogreen123"
+                password = "gogreen123",
+                backgroundUrl = "https://static.vecteezy.com/system/resources/previews/006/224/670/non_2x/go-green-concept-banner-with-lush-green-foliage-illustration-vector.jpg"
             ),
             ServiceInfo(
                 id = "5",
@@ -100,7 +102,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Panitos",
                 tag = "Edif. O – UVG",
                 logoUrl = "https://pedidosya.dhmedia.io/image/pedidosya/restaurants/panitos-y-algo-mas-logo.jpg",
-                password = "panitos123"
+                password = "panitos123",
+                backgroundUrl = "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/32/b9/7b/planta-baja.jpg?w=900&h=500&s=1"
             ),
             ServiceInfo(
                 id = "6",
@@ -108,7 +111,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Frankfurt",
                 tag = "Cafetería Central",
                 logoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx57XNb3GJakIiMYtpxB19tr2V7BGVsdV8tQ&s",
-                password = "frankfurt123"
+                password = "frankfurt123",
+                backgroundUrl = "https://degusta-pictures-hd.b-cdn.net/16_100341_r_0.jpg?v=2382"
             ),
             ServiceInfo(
                 id = "7",
@@ -116,27 +120,25 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 displayName = "Golden",
                 tag = "Edif. P – UVG",
                 logoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHnFvfrTUk3L5N5eWP08HyG8BTGiAEqxaH7Q&s",
-                password = "golden123"
+                password = "golden123",
+                backgroundUrl = "https://goldenharvesting.com/wp-content/uploads/2025/07/main-logo.png"
             )
         )
     }
 
+    // Mapeo del nuevo parámetro hacia ServiceUi
     val services = servicesInfo.map { info ->
         ServiceUi(
             id = info.id,
             name = info.name,
-            imageUrl = "",
-            bannerUrl = info.logoUrl,
+            imageUrl = info.logoUrl,
+            bannerUrl = info.backgroundUrl, // 👈 fondo para cada restaurante
             time = "15-20 min"
         )
     }
 
-
     var serviceSelectedTab by rememberSaveable { mutableStateOf(SOrderTab.ORDERS) }
-
-
     var currentServiceInfo by remember { mutableStateOf<ServiceInfo?>(null) }
-
 
     val serviceHeader = remember(currentServiceInfo) {
         currentServiceInfo?.let { info ->
@@ -151,8 +153,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
     var serviceOrders by rememberSaveable {
         mutableStateOf(
             listOf(
-                SOrderUi("BB-2001","Pendiente","Usuario",3,"Q95"),
-                SOrderUi("BB-2002","En preparación","Adriana",2,"Q62")
+                SOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95"),
+                SOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62")
             )
         )
     }
@@ -202,7 +204,6 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             )
         )
     }
-
 
     val serviceMenu = remember(currentServiceInfo) {
         currentServiceInfo?.let { FakeApi.getMenuForService(it.id) }
