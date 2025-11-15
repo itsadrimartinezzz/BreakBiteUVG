@@ -19,6 +19,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.martinezzf.breakbitee.data.ServiceOrderUi
+
+// Enum para las pestañas del restaurante
+enum class ServiceOrderTab {
+    ORDERS, STORE
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

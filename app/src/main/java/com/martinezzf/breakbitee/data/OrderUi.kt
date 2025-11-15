@@ -6,5 +6,5 @@ data class OrderUi(
     val totalQ: Int,
     val productCount: Int,
     val dateTime: String,
-    val status: String = "Entregado"
+    val status: String
 )

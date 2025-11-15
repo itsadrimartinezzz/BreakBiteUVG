@@ -27,16 +27,14 @@ fun UserProductScreen(
     onBack: () -> Unit,
     onAddToOrder: (ProductDetailUi) -> Unit
 ) {
-    // 🎨 Colores base (verdes institucionales)
     val BannerGreen = Color(0xFF2E584A)
     val LightGreen = Color(0xFF497766)
-
-    // 🎨 Colores dinámicos del tema actual
     val colors = MaterialTheme.colorScheme
     val isDark = isSystemInDarkTheme()
 
     var quantity by remember { mutableIntStateOf(1) }
 
+    // Mapas para expandir secciones y selección de opciones
     val expandedMap = remember(product.id) {
         mutableStateMapOf<String, Boolean>().apply {
             product.parameters.forEach { put(it.id, true) }
@@ -51,12 +49,13 @@ fun UserProductScreen(
         }
     }
 
+    // Cálculo del precio total dinámico
     val totalQ by remember {
         derivedStateOf {
             val extras = product.parameters
                 .flatMap { it.options }
                 .filter { selectedMap[it.id] == true }
-                .sumOf { it.priceDeltaQ }
+                .sumOf { it.extra }
             (product.basePriceQ + extras) * quantity
         }
     }
@@ -101,7 +100,6 @@ fun UserProductScreen(
 
                 Spacer(Modifier.width(12.dp))
 
-                // Botón principal verde
                 Button(
                     onClick = { onAddToOrder(product) },
                     modifier = Modifier
@@ -147,7 +145,6 @@ fun UserProductScreen(
                         )
                 )
 
-                // Gradiente inferior para contraste con el texto
                 Box(
                     modifier = Modifier
                         .matchParentSize()
@@ -161,7 +158,6 @@ fun UserProductScreen(
                         )
                 )
 
-                // Botón de regresar
                 IconButton(
                     onClick = onBack,
                     modifier = Modifier
@@ -176,7 +172,7 @@ fun UserProductScreen(
                 }
             }
 
-            // Información del restaurante
+            // Logo del restaurante
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -201,7 +197,6 @@ fun UserProductScreen(
                         .clip(RoundedCornerShape(6.dp))
                         .background(colors.surfaceVariant)
                 )
-
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = product.serviceName,
@@ -210,7 +205,7 @@ fun UserProductScreen(
                 )
             }
 
-            // Información principal del producto
+            // Información principal
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     product.name,
@@ -218,7 +213,6 @@ fun UserProductScreen(
                     fontWeight = FontWeight.Bold,
                     color = colors.onBackground
                 )
-
                 if (product.description.isNotBlank()) {
                     Spacer(Modifier.height(6.dp))
                     Text(
@@ -226,7 +220,6 @@ fun UserProductScreen(
                         color = colors.onSurfaceVariant
                     )
                 }
-
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "Q$totalQ",
@@ -238,7 +231,7 @@ fun UserProductScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Parámetros del producto
+            // Parámetros
             product.parameters.forEach { param ->
                 ParameterBlock(
                     parameter = param,
@@ -322,8 +315,8 @@ private fun ParameterBlock(
                             )
 
                             val label = buildString {
-                                append(opt.label)
-                                if (opt.priceDeltaQ != 0) append(" (+Q${opt.priceDeltaQ})")
+                                append(opt.name)
+                                if (opt.extra != 0) append(" (+Q${opt.extra})")
                             }
 
                             Text(

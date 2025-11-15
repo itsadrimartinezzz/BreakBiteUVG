@@ -8,31 +8,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.martinezzf.breakbitee.data.ServiceUi
-import com.martinezzf.breakbitee.data.FakeApi
-import com.martinezzf.breakbitee.data.OrderUi
-import com.martinezzf.breakbitee.data.ProductDetailUi
-import com.martinezzf.breakbitee.data.ProductOptionUi
-import com.martinezzf.breakbitee.data.ProductParameterUi
+import com.martinezzf.breakbitee.data.*
 import com.martinezzf.breakbitee.ui.userScreens.*
 import com.martinezzf.breakbitee.ui.screens.LoginScreen
 import com.martinezzf.breakbitee.ui.screens.SignUpScreen
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceOrdersScreen
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceHomeScreen
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceOrderDetailScreen
-import com.martinezzf.breakbitee.ui.serviceScreens.NewProductScreen
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceOrderUi as SOrderUi
-import com.martinezzf.breakbitee.ui.serviceScreens.OrderItemUi as SOrderItemUi
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceHeaderUi as SHeaderUi
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceOrderTab as SOrderTab
-import com.martinezzf.breakbitee.ui.serviceScreens.ServiceTab as SServiceTab
-import com.martinezzf.breakbitee.ui.serviceScreens.ProductUi as SProductUi
-import com.martinezzf.breakbitee.ui.serviceScreens.CategoryUi as SCategoryUi
-
+import com.martinezzf.breakbitee.ui.serviceScreens.*
 import kotlinx.serialization.json.Json
+import com.martinezzf.breakbitee.data.ServiceOrderUi
+import com.martinezzf.breakbitee.data.UserOrderItemUi
 import androidx.compose.runtime.compositionLocalOf
+import com.martinezzf.breakbitee.ui.navegation.LocalAllItems
+import com.martinezzf.breakbitee.ui.userScreens.NotificationsScreen
 
-val LocalAllItems = compositionLocalOf { listOf<UserOrderItemUi>() }
+
+
 
 data class ServiceInfo(
     val id: String,
@@ -41,13 +30,12 @@ data class ServiceInfo(
     val tag: String,
     val logoUrl: String,
     val password: String,
-    val backgroundUrl: String = "" // 👈 nuevo campo para el fondo
+    val backgroundUrl: String = ""
 )
 
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
-
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
 
     val nav = rememberNavController()
@@ -58,6 +46,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
     var allItems by remember { mutableStateOf(mutableListOf<UserOrderItemUi>()) }
     var notifications by remember { mutableStateOf(listOf<UserNotification>()) }
 
+    // === Restaurantes ===
     val servicesInfo = remember {
         listOf(
             ServiceInfo(
@@ -126,124 +115,44 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
         )
     }
 
-    // Mapeo del nuevo parámetro hacia ServiceUi
-    val services = servicesInfo.map { info ->
+    val services = servicesInfo.map {
         ServiceUi(
-            id = info.id,
-            name = info.name,
-            imageUrl = info.logoUrl,
-            bannerUrl = info.backgroundUrl, // 👈 fondo para cada restaurante
+            id = it.id,
+            name = it.name,
+            imageUrl = it.logoUrl,
+            bannerUrl = it.backgroundUrl,
             time = "15-20 min"
         )
     }
 
-    var serviceSelectedTab by rememberSaveable { mutableStateOf(SOrderTab.ORDERS) }
+    var serviceSelectedTab by rememberSaveable { mutableStateOf(ServiceOrderTab.ORDERS) }
     var currentServiceInfo by remember { mutableStateOf<ServiceInfo?>(null) }
 
     val serviceHeader = remember(currentServiceInfo) {
-        currentServiceInfo?.let { info ->
-            SHeaderUi(
-                name = info.displayName,
-                tag = info.tag,
-                logoUrl = info.logoUrl
+        currentServiceInfo?.let {
+            ServiceHeaderUi(
+                name = it.displayName,
+                tag = it.tag,
+                logoUrl = it.logoUrl
             )
-        } ?: SHeaderUi(name = "Servicio", tag = "UVG", logoUrl = "")
+        } ?: ServiceHeaderUi(name = "Servicio", tag = "UVG", logoUrl = "")
     }
 
     var serviceOrders by rememberSaveable {
         mutableStateOf(
             listOf(
-                SOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95"),
-                SOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62")
+                ServiceOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95"),
+                ServiceOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62")
             )
         )
-    }
-
-    val serviceOrderItems by remember {
-        mutableStateOf(
-            mapOf(
-                "BB-2001" to listOf(
-                    SOrderItemUi(
-                        id = "i1",
-                        nombre = "Cappuccino",
-                        precio = 26,
-                        listo = true,
-                        imageUrl = "https://www.nespresso.com/coffee-blog/sites/default/files/2024-08/nespresso-recipes-CAPPUCCINO-BANANA-SESAME-SEEDS.jpg"
-                    ),
-                    SOrderItemUi(
-                        id = "i2",
-                        nombre = "Menu, Panini - Pollo Pesto",
-                        precio = 51,
-                        listo = true,
-                        imageUrl = "https://www.lecafeguatemala.com/_uploads/menus/imgs/full/693-20230505143758.jpg"
-                    ),
-                    SOrderItemUi(
-                        id = "i3",
-                        nombre = "Galleta Chocochip",
-                        precio = 18,
-                        listo = true,
-                        imageUrl = "https://www.fifteenspatulas.com/wp-content/uploads/2020/08/Chocolate-Muffins-16.jpg"
-                    )
-                ),
-                "BB-2002" to listOf(
-                    SOrderItemUi(
-                        id = "i4",
-                        nombre = "Latte 12oz",
-                        precio = 28,
-                        listo = true,
-                        imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEzen5N3wvWNph_2_zzQQGKqNhLvRZCaweBg&s"
-                    ),
-                    SOrderItemUi(
-                        id = "i5",
-                        nombre = "Americano",
-                        precio = 21,
-                        listo = true,
-                        imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYfE4fnUPGLsOY-6HVFZIXXR_8W4yT0bUKkQ&s"
-                    )
-                )
-            )
-        )
-    }
-
-    val serviceMenu = remember(currentServiceInfo) {
-        currentServiceInfo?.let { FakeApi.getMenuForService(it.id) }
-            ?: Pair(emptyList(), emptyList())
-    }
-
-    val servicePopular = remember(serviceMenu) {
-        serviceMenu.first.map { product ->
-            SProductUi(
-                id = product.id,
-                title = product.name,
-                price = product.priceLabel,
-                imageUrl = product.imageUrl
-            )
-        }
-    }
-
-    val serviceCategories = remember(serviceMenu) {
-        serviceMenu.second.map { category ->
-            SCategoryUi(
-                id = category.id,
-                name = category.name,
-                products = category.products.map { product ->
-                    SProductUi(
-                        id = product.id,
-                        title = product.name,
-                        price = product.priceLabel,
-                        imageUrl = product.imageUrl
-                    )
-                }
-            )
-        }
     }
 
     fun isUvgEmail(s: String) = s.endsWith("@uvg.edu.gt", ignoreCase = true)
 
+    // 🔹 Fix: Composable context correcto
     CompositionLocalProvider(LocalAllItems provides allItems) {
         NavHost(navController = nav, startDestination = LoginDestination) {
-
-            // LOGIN
+            // === LOGIN ===
             composable<LoginDestination> {
                 var email by rememberSaveable { mutableStateOf("") }
                 var password by rememberSaveable { mutableStateOf("") }
@@ -255,121 +164,81 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     password = password,
                     onPasswordChange = { password = it; error = null },
                     onContinue = {
-
                         if (isUvgEmail(email)) {
                             userEmail = email
                             userName = email.substringBefore("@").replaceFirstChar { it.titlecase() }
-                            nav.navigate(MainDestination) { popUpTo(LoginDestination) { inclusive = true } }
-                            return@LoginScreen
-                        }
-
-
-                        val inputName = email.trim()
-                        val matchedService = servicesInfo.find {
-                            it.name.equals(inputName, ignoreCase = true) ||
-                                    it.displayName.equals(inputName, ignoreCase = true)
-                        }
-
-                        if (matchedService != null && matchedService.password == password) {
-
-                            currentServiceInfo = matchedService
-                            userEmail = "${matchedService.name}@service.local"
-                            userName = matchedService.displayName
-                            nav.navigate(ServiceOrdersDestination) {
+                            nav.navigate(MainDestination) {
                                 popUpTo(LoginDestination) { inclusive = true }
                             }
                         } else {
-                            error = "Credenciales inválidas"
+                            val match = servicesInfo.find {
+                                it.name.equals(email, true) || it.displayName.equals(email, true)
+                            }
+                            if (match != null && match.password == password) {
+                                currentServiceInfo = match
+                                nav.navigate(ServiceOrdersDestination) {
+                                    popUpTo(LoginDestination) { inclusive = true }
+                                }
+                            } else {
+                                error = "Credenciales inválidas"
+                            }
                         }
                     },
                     onGoToSignUp = { nav.navigate(SignUpDestination) }
                 )
             }
 
-            // SIGNUP
+            // === SIGN UP ===
             composable<SignUpDestination> {
-                var uvg by rememberSaveable { mutableStateOf("") }
-                var service by rememberSaveable { mutableStateOf("") }
-
                 SignUpScreen(
-                    uvgEmail = uvg,
-                    onUvgEmailChange = { uvg = it },
-                    serviceEmail = service,
-                    onServiceEmailChange = { service = it },
-                    onContinueUvg = {
-                        if (uvg.isNotBlank()) {
-                            userEmail = uvg
-                            userName = uvg.substringBefore("@").replaceFirstChar { it.titlecase() }
-                        }
-                        nav.navigate(MainDestination) { popUpTo(LoginDestination) { inclusive = true } }
-                    },
-                    onContinueService = {
-                        if (service.isNotBlank()) {
-
-                            val matchedService = servicesInfo.find {
-                                it.name.equals(service, ignoreCase = true) ||
-                                        it.displayName.equals(service, ignoreCase = true)
-                            }
-
-                            if (matchedService != null) {
-                                currentServiceInfo = matchedService
-                                userEmail = "${matchedService.name}@service.local"
-                                userName = matchedService.displayName
-                            } else {
-                                userEmail = "$service@service.local"
-                                userName = service.replaceFirstChar { it.titlecase() }
-                            }
-                        }
-                        nav.navigate(ServiceOrdersDestination) { popUpTo(LoginDestination) { inclusive = true } }
-                    },
+                    uvgEmail = "",
+                    onUvgEmailChange = {},
+                    serviceEmail = "",
+                    onServiceEmailChange = {},
+                    onContinueUvg = { nav.navigate(MainDestination) },
+                    onContinueService = { nav.navigate(ServiceOrdersDestination) },
                     onGoToLogin = { nav.popBackStack() },
-                    onGoogle = { nav.navigate(MainDestination) { popUpTo(LoginDestination) { inclusive = true } } }
+                    onGoogle = { nav.navigate(MainDestination) }
                 )
             }
 
-            // MAIN (estudiantes)
+            // === HOME (Usuarios) ===
             composable<MainDestination> {
                 var selectedTab by rememberSaveable { mutableStateOf(UserTab.Home) }
 
                 when (selectedTab) {
-                    UserTab.Home -> {
-                        UserHomeScreen(
-                            services = services,
-                            onOpenService = { nav.navigate(ServiceDestination(it.id)) },
-                            selectedTab = selectedTab,
-                            onTabChange = { selectedTab = it }
-                        )
-                    }
-                    UserTab.Orders, UserTab.History -> {
-                        UserOrderHistoryScreen(
-                            orders = orders,
-                            allItems = allItems,
-                            onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id)) },
-                            selectedTab = selectedTab,
-                            onTabChange = { selectedTab = it }
-                        )
-                    }
-                    UserTab.Profile -> {
-                        UserProfileScreen(
-                            userName = userName,
-                            userEmail = userEmail,
-                            selectedTab = selectedTab,
-                            onTabChange = { selectedTab = it },
-                            onLogout = {
-                                userName = "Usuario"
-                                userEmail = "usuario@uvg.edu.gt"
-                                orders = emptyList()
-                                allItems.clear()
-                                nav.navigate(LoginDestination) { popUpTo(MainDestination) { inclusive = true } }
-                            },
-                            onNotifications = { nav.navigate(NotificationsDestination) }
-                        )
-                    }
-                    UserTab.Notifications -> {}
+                    UserTab.Home -> UserHomeScreen(
+                        services = services,
+                        onOpenService = { nav.navigate(ServiceDestination(it.id)) },
+                        selectedTab = selectedTab,
+                        onTabChange = { selectedTab = it }
+                    )
+                    UserTab.Orders, UserTab.History -> UserOrderHistoryScreen(
+                        orders = orders,
+                        allItems = allItems,
+                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id)) },
+                        selectedTab = selectedTab,
+                        onTabChange = { selectedTab = it }
+                    )
+                    UserTab.Profile -> UserProfileScreen(
+                        userName = userName,
+                        userEmail = userEmail,
+                        selectedTab = selectedTab,
+                        onTabChange = { selectedTab = it },
+                        onLogout = {
+                            userName = "Usuario"
+                            userEmail = "usuario@uvg.edu.gt"
+                            nav.navigate(LoginDestination) {
+                                popUpTo(MainDestination) { inclusive = true }
+                            }
+                        },
+                        onNotifications = { nav.navigate(NotificationsDestination) }
+                    )
+                    else -> {}
                 }
             }
 
-
+            // === SERVICIO SELECCIONADO ===
             composable<ServiceDestination> { backStackEntry ->
                 val args = backStackEntry.toRoute<ServiceDestination>()
                 val service = services.find { it.id == args.serviceId }
@@ -382,7 +251,9 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                         OrderCompletedScreenAuto(
                             onDone = {
                                 showConfirmation = false
-                                nav.navigate(MainDestination) { popUpTo(MainDestination) { inclusive = true } }
+                                nav.navigate(MainDestination) {
+                                    popUpTo(MainDestination) { inclusive = true }
+                                }
                             },
                             delayMs = 3000L
                         )
@@ -393,21 +264,29 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                             categories = menu.second,
                             onBack = { nav.popBackStack() },
                             onOpenProduct = { product ->
-                                val productDetail = ProductDetailUi(
+                                val detail = ProductDetailUi(
                                     id = product.id,
                                     name = product.name,
-                                    description = product.descripcion,
-                                    basePriceQ = product.priceLabel.filter { it.isDigit() }.toIntOrNull() ?: 25,
+                                    description = product.descripcion.ifBlank {
+                                        "Producto disponible en ${service.name}"
+                                    },
+                                    basePriceQ = product.priceLabel.replace("Q", "").trim().toIntOrNull() ?: 25,
                                     imageUrl = product.imageUrl,
                                     parameters = listOf(
-                                        ProductParameterUi("size", "Tamaño", listOf(
-                                            ProductOptionUi("opt12", "Normal"),
-                                            ProductOptionUi("opt16", "Deluxe", 4)
-                                        ))
+                                        ProductParameterUi(
+                                            id = "size",
+                                            name = "Tamaño",
+                                            options = listOf(
+                                                ProductOptionUi("opt12", "Normal"),
+                                                ProductOptionUi("opt16", "Grande", 4)
+                                            )
+                                        )
                                     ),
                                     serviceName = service.name
                                 )
-                                nav.navigate(ProductDestination(Json.encodeToString(productDetail), service.id))
+
+                                val encoded = Json.encodeToString(ProductDetailUi.serializer(), detail)
+                                nav.navigate(ProductDestination(encoded, service.id))
                             },
                             onCompleteOrder = {
                                 showConfirmation = true
@@ -422,90 +301,81 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 } else Text("Servicio no encontrado")
             }
 
-
-            composable<ProductDestination> { backStackEntry ->
-                val args = backStackEntry.toRoute<ProductDestination>()
-                val product = Json.decodeFromString<ProductDetailUi>(args.productJson)
+            // === PRODUCT DETAIL ===
+            composable<ProductDestination> { entry ->
+                val args = entry.toRoute<ProductDestination>()
+                val product = remember {
+                    Json.decodeFromString(ProductDetailUi.serializer(), args.productJson)
+                }
 
                 UserProductScreen(
                     product = product,
                     onBack = { nav.popBackStack() },
-                    onAddToOrder = { addedProduct ->
-                        val existingOrder = orders.find { it.serviceName == addedProduct.serviceName }
+                    onAddToOrder = { added ->
+                        val existingOrder = orders.find { it.serviceName == added.serviceName }
+
                         if (existingOrder != null) {
                             orders = orders.map {
-                                if (it.id == existingOrder.id)
-                                    it.copy(totalQ = it.totalQ + addedProduct.basePriceQ, productCount = it.productCount + 1)
-                                else it
+                                if (it.serviceName == added.serviceName) {
+                                    it.copy(
+                                        totalQ = it.totalQ + added.basePriceQ,
+                                        productCount = it.productCount + 1
+                                    )
+                                } else it
                             }
                         } else {
-                            orders = orders + OrderUi(
-                                "order-${System.currentTimeMillis()}",
-                                addedProduct.serviceName,
-                                addedProduct.basePriceQ,
-                                1,
-                                "hoy - ${java.text.SimpleDateFormat("hh:mm a").format(java.util.Date())}",
-                                "Pendiente"
+                            val newOrder = OrderUi(
+                                id = "order-${System.currentTimeMillis()}",
+                                serviceName = added.serviceName,
+                                totalQ = added.basePriceQ,
+                                productCount = 1,
+                                dateTime = "hoy - ${java.text.SimpleDateFormat("hh:mm a").format(java.util.Date())}",
+                                status = "Pendiente"
+                            )
+                            orders = orders + newOrder
+
+                            serviceOrders = serviceOrders + ServiceOrderUi(
+                                id = newOrder.id,
+                                estado = "Pendiente",
+                                cliente = userName,
+                                cantidadProductos = 1,
+                                total = "Q${added.basePriceQ}"
                             )
                         }
-                        allItems.add(UserOrderItemUi(
-                            "${addedProduct.serviceName}-${System.currentTimeMillis()}",
-                            addedProduct.name,
-                            addedProduct.basePriceQ,
-                            addedProduct.imageUrl,
-                            1
-                        ))
-                        nav.navigate(ServiceDestination(args.serviceId))
+
+                        allItems.add(
+                            UserOrderItemUi(
+                                id = "${added.serviceName}-${System.currentTimeMillis()}",
+                                name = added.name,
+                                priceQ = added.basePriceQ,
+                                imageUrl = added.imageUrl,
+                                quantity = 1,
+                                serviceId = added.serviceName
+                            )
+                        )
+
+                        nav.popBackStack()
                     }
                 )
             }
 
-
-            composable<OrderDetailDestination> { backStackEntry ->
-                val order = orders.find { it.id == backStackEntry.toRoute<OrderDetailDestination>().orderId }
-                if (order != null) {
-                    val service = services.find { it.name == order.serviceName }
-                    val restaurantItems = allItems.filter { it.id.startsWith(order.serviceName) }
-
-                    val detail = UserOrderDetailUi(
-                        id = order.id,
-                        serviceName = order.serviceName,
-                        status = order.status,
-                        serviceLogoUrl = service?.bannerUrl ?: "",
-                        items = restaurantItems
-                    )
-
-                    UserOrderDetailScreen(
-                        data = detail,
-                        onBack = { nav.popBackStack() }
-                    )
-                } else Text("Pedido no encontrado")
-            }
-
-
-            composable<NotificationsDestination> {
-                NotificationsScreen(notifications, onBack = { nav.popBackStack() })
-            }
-
-
-
-
+            // === VISTA ESTABLECIMIENTO ===
             composable<ServiceOrdersDestination> {
                 ServiceOrdersScreen(
                     negocio = serviceHeader.name ?: "Tu negocio",
-                    tag = serviceHeader.tag,
+                    tag = serviceHeader.tag ?: "Sin ubicación",
                     logoUrl = serviceHeader.logoUrl,
                     orders = serviceOrders,
                     selectedTab = serviceSelectedTab,
-                    onTabChange = { tab ->
-                        serviceSelectedTab = tab
-                        if (tab == SOrderTab.STORE) nav.navigate(ServiceStoreDestination)
+                    onTabChange = {
+                        serviceSelectedTab = it
+                        if (it == ServiceOrderTab.STORE) nav.navigate(ServiceStoreDestination)
                     },
-                    onEditHeader = { },
-                    onOpenOrder = { nav.navigate(ServiceOrderDetailDestination(it.id)) },
+                    onEditHeader = {},
+                    onOpenOrder = { order ->
+                        nav.navigate(ServiceOrderDetailDestination(order.id))
+                    },
                     onLogout = {
-                        userName = "Usuario"
-                        userEmail = "usuario@uvg.edu.gt"
                         currentServiceInfo = null
                         nav.navigate(LoginDestination) {
                             popUpTo(ServiceOrdersDestination) { inclusive = true }
@@ -515,48 +385,50 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             }
 
 
-            composable<ServiceStoreDestination> {
-                serviceSelectedTab = SOrderTab.STORE
-                ServiceHomeScreen(
-                    header = serviceHeader,
-                    popular = servicePopular,
-                    categories = serviceCategories,
-                    selectedTab = SServiceTab.STORE,
-                    onTabChange = { if (it == SServiceTab.ORDERS) nav.navigate(ServiceOrdersDestination) },
-                    onAddCategory = { },
-                    onAddPopularProduct = { nav.navigate(NewProductDestination) },
-                    onOpenProduct = { nav.navigate(NewProductDestination) },
-                    onEditHeader = { },
-                    onLogout = {
-                        userName = "Usuario"
-                        userEmail = "usuario@uvg.edu.gt"
-                        currentServiceInfo = null
-                        nav.navigate(LoginDestination) {
-                            popUpTo(ServiceStoreDestination) { inclusive = true }
-                        }
-                    }
-                )
-            }
-
-
+            // === DETALLE PEDIDO ===
             composable<ServiceOrderDetailDestination> { entry ->
                 val args = entry.toRoute<ServiceOrderDetailDestination>()
                 val order = serviceOrders.find { it.id == args.orderId }
-                ServiceOrderDetailScreen(
-                    customerName = order?.cliente ?: "Cliente",
-                    statusText = order?.estado ?: "Pendiente",
-                    items = serviceOrderItems[args.orderId] ?: emptyList(),
-                    onBack = { nav.popBackStack() },
-                    onComplete = {
-                        serviceOrders = serviceOrders.map {
-                            if (it.id == args.orderId) it.copy(estado = "Completado") else it
+
+                if (order != null) {
+                    val orderItems = allItems
+                        .filter { it.serviceId == order.cliente }
+                        .map {
+                            OrderItemUi(
+                                id = it.id,
+                                nombre = it.name,
+                                precio = it.priceQ,
+                                imageUrl = it.imageUrl ?: "",
+                                listo = false
+                            )
                         }
-                        nav.popBackStack()
-                    }
+
+                    ServiceOrderDetailScreen(
+                        order = order,
+                        items = orderItems,
+                        onBack = { nav.popBackStack() },
+                        onComplete = {
+                            serviceOrders = serviceOrders.map {
+                                if (it.id == order.id) it.copy(estado = "Completado") else it
+                            }
+                            nav.popBackStack()
+                        }
+                    )
+                } else {
+                    Text("Pedido no encontrado")
+                }
+            }
+
+            // === NOTIFICACIONES ===
+            composable<NotificationsDestination> {
+                NotificationsScreen(
+                    notifications = notifications,
+                    onBack = { nav.popBackStack() }
                 )
             }
 
 
+            // === NUEVO PRODUCTO ===
             composable<NewProductDestination> {
                 NewProductScreen(onBack = { nav.popBackStack() })
             }

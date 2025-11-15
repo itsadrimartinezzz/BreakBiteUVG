@@ -41,9 +41,6 @@ data class CategoryUi(
     val products: List<ProductUi>
 )
 
-enum class ServiceOrderTab {
-    ORDERS, STORE
-}
 
 enum class ServiceTab {
     ORDERS, STORE

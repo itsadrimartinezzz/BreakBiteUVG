@@ -1,6 +1,5 @@
 package com.martinezzf.breakbitee.ui.userScreens
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,24 +22,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
+// Colores base
 private val BannerGreen = Color(0xFF2E584A)
 private val CardBg = Color(0xFFF2F4F5)
 private val ItemBg = Color(0xFFE7EFEA)
 
+/**
+ * Modelo para productos simples (API simulada)
+ */
 data class SimpleProductUi(
     val id: String,
     val name: String,
     val priceLabel: String,
-    var imageUrl: String = "",
-    var descripcion: String = ""
+    val imageUrl: String = "",
+    val descripcion: String = ""
 )
 
+/**
+ * Modelo para categorías simples (API simulada)
+ */
 data class SimpleCategoryUi(
     val id: String,
     val name: String,
     val products: List<SimpleProductUi>
 )
 
+/**
+ * Pantalla principal del usuario dentro del restaurante.
+ */
 @Composable
 fun UserServiceScreen(
     serviceName: String,
@@ -52,23 +61,7 @@ fun UserServiceScreen(
 ) {
     Scaffold(
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = onCompleteOrder,
-                    modifier = Modifier
-                        .height(46.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1D3B31))
-                ) {
-                    Text("Completar pedido", color = Color.White)
-                }
-            }
+            BottomBar(onCompleteOrder = onCompleteOrder)
         }
     ) { padding ->
         LazyColumn(
@@ -81,6 +74,7 @@ fun UserServiceScreen(
         ) {
             item { Header(serviceName = serviceName, onBack = onBack) }
 
+            // Chip de “Retiro en local”
             item {
                 Box(
                     modifier = Modifier
@@ -104,6 +98,7 @@ fun UserServiceScreen(
 
             item { Divider(thickness = 1.dp, color = Color(0xFFE0E0E0)) }
 
+            // Sección de productos populares
             if (popular.isNotEmpty()) {
                 item { SectionTitle("Productos populares") }
                 item {
@@ -115,26 +110,26 @@ fun UserServiceScreen(
                 }
             }
 
-            items(categories) { cat ->
-                SectionTitle(cat.name)
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    cat.products.forEach { p ->
-                        ProductRowCard(product = p, onOpen = { onOpenProduct(p) })
-                    }
+            // Secciones por categoría
+            categories.forEach { cat ->
+                item { SectionTitle(cat.name) }
+                items(cat.products) { p ->
+                    ProductRowCard(product = p, onOpen = { onOpenProduct(p) })
                 }
-                Spacer(Modifier.height(8.dp))
-                Divider(thickness = 1.dp, color = Color(0xFFE0E0E0))
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    Divider(thickness = 1.dp, color = Color(0xFFE0E0E0))
+                }
             }
 
-            item { Spacer(Modifier.height(8.dp)) }
+            item { Spacer(Modifier.height(80.dp)) }
         }
     }
 }
 
+/**
+ * Header superior con nombre del restaurante y botón de regreso.
+ */
 @Composable
 private fun Header(serviceName: String, onBack: () -> Unit) {
     Column {
@@ -165,6 +160,9 @@ private fun Header(serviceName: String, onBack: () -> Unit) {
     }
 }
 
+/**
+ * Título de cada sección (populares, categorías).
+ */
 @Composable
 private fun SectionTitle(title: String) {
     Text(
@@ -174,6 +172,9 @@ private fun SectionTitle(title: String) {
     )
 }
 
+/**
+ * Grid de productos populares.
+ */
 @Composable
 private fun PopularGrid(
     products: List<SimpleProductUi>,
@@ -212,6 +213,9 @@ private fun PopularGrid(
     }
 }
 
+/**
+ * Tarjeta horizontal de producto (usada en categorías).
+ */
 @Composable
 private fun ProductRowCard(
     product: SimpleProductUi,
@@ -224,6 +228,7 @@ private fun ProductRowCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onOpen() }
+            .padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -243,6 +248,30 @@ private fun ProductRowCard(
                 Text(product.name, fontWeight = FontWeight.SemiBold)
                 Text(product.priceLabel, color = BannerGreen)
             }
+        }
+    }
+}
+
+/**
+ * Botón inferior para finalizar pedido.
+ */
+@Composable
+private fun BottomBar(onCompleteOrder: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            onClick = onCompleteOrder,
+            modifier = Modifier
+                .height(46.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1D3B31))
+        ) {
+            Text("Completar pedido", color = Color.White)
         }
     }
 }

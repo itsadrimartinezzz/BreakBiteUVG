@@ -17,12 +17,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.martinezzf.breakbitee.data.UserOrderItemUi
+import com.martinezzf.breakbitee.data.ServiceOrderUi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceOrderDetailScreen(
-    customerName: String,
-    statusText: String,
+    order: ServiceOrderUi,
     items: List<OrderItemUi>,
     onBack: () -> Unit,
     onComplete: () -> Unit
@@ -51,6 +52,7 @@ fun ServiceOrderDetailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // 🔹 Encabezado del pedido
             item {
                 Column(
                     modifier = Modifier
@@ -60,27 +62,35 @@ fun ServiceOrderDetailScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        "Cliente: $customerName",
+                        "Cliente: ${order.cliente}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Estado: $statusText",
+                        "Estado: ${order.estado}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = when (statusText) {
+                        color = when (order.estado) {
                             "Pendiente" -> Color(0xFFFF9800)
                             "En preparación" -> Color(0xFF2196F3)
                             "Completado" -> Color(0xFF4CAF50)
                             else -> MaterialTheme.colorScheme.onSurface
                         }
                     )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Total: ${order.total}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2E584A)
+                    )
                 }
             }
 
+            // 🔹 Sección de productos
             item {
                 Text(
-                    "Productos",
+                    "Productos del pedido",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -90,14 +100,16 @@ fun ServiceOrderDetailScreen(
                 OrderItemCard(item)
             }
 
-            if (statusText != "Completado") {
+            // 🔹 Botón de completar pedido
+            if (order.estado != "Completado") {
                 item {
                     Button(
                         onClick = onComplete,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF4CAF50)
-                        )
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Text("Marcar como completado")
                     }

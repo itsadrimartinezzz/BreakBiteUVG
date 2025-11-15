@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.OrderUi
 import com.martinezzf.breakbitee.ui.navegation.UserTab
+import com.martinezzf.breakbitee.data.UserOrderItemUi
+
 
 @Composable
 fun UserOrderHistoryScreen(
