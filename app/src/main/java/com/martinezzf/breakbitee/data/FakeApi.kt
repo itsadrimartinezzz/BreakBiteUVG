@@ -2,8 +2,57 @@ package com.martinezzf.breakbitee.data
 
 import com.martinezzf.breakbitee.ui.userScreens.SimpleCategoryUi
 import com.martinezzf.breakbitee.ui.userScreens.SimpleProductUi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 object FakeApi {
+
+    // -------------------------------------------------------
+    // SISTEMA DE PEDIDOS — AÑADIDO SIN ROMPER NADA
+    // -------------------------------------------------------
+
+    private val barista = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val cafe = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val gitane = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val goGreen = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val panitos = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val mixtas = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+    private val golden = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
+
+    /**
+     * Agregar pedido al restaurante correcto
+     */
+    fun enviarPedido(restaurante: String, pedido: ServiceOrderUi) {
+        when (restaurante.lowercase()) {
+            "barista" -> barista.value = barista.value + pedido
+            "& cafe", "cafe" -> cafe.value = cafe.value + pedido
+            "gitane" -> gitane.value = gitane.value + pedido
+            "go green", "gogreen" -> goGreen.value = goGreen.value + pedido
+            "panitos" -> panitos.value = panitos.value + pedido
+            "mixtas" -> mixtas.value = mixtas.value + pedido
+            "golden", "golden harvest" -> golden.value = golden.value + pedido
+        }
+    }
+
+    /**
+     * Obtener pedidos para un restaurante
+     */
+    fun getPedidos(restaurante: String): StateFlow<List<ServiceOrderUi>> {
+        return when (restaurante.lowercase()) {
+            "barista" -> barista
+            "& cafe", "cafe" -> cafe
+            "gitane" -> gitane
+            "go green", "gogreen" -> goGreen
+            "panitos" -> panitos
+            "mixtas" -> mixtas
+            "golden", "golden harvest" -> golden
+            else -> MutableStateFlow(emptyList())
+        }
+    }
+
+    // -------------------------------------------------------
+    // TODO EL CÓDIGO ORIGINAL DEL MENÚ ↓↓↓  (NO TOCADO)
+    // -------------------------------------------------------
 
     /**
      * Devuelve un par con productos populares y categorías por servicio.
@@ -100,7 +149,7 @@ object FakeApi {
                 Pair(populares, categorias)
             }
 
-            // ======== Panitos y algo más ========
+            // ======== Panitos ========
             "5" -> {
                 val populares = listOf(
                     SimpleProductUi("p1", "Sandwich mixto", "Q22", "https://i.imgur.com/fq8yXyJ.png", "Clásico jamón y queso."),
@@ -118,7 +167,7 @@ object FakeApi {
                 Pair(populares, categorias)
             }
 
-            // ======== Mixtas Frankfurt ========
+            // ======== Mixtas ========
             "6" -> {
                 val populares = listOf(
                     SimpleProductUi("m1", "Mixta tradicional", "Q20", "https://i.imgur.com/0Yk2x4D.png", "Clásica con repollo y chiles."),
@@ -136,7 +185,7 @@ object FakeApi {
                 Pair(populares, categorias)
             }
 
-            // ======== Golden Harvest ========
+            // ======== Golden ========
             "7" -> {
                 val populares = listOf(
                     SimpleProductUi("gh1", "Bowl asiático", "Q35", "https://i.imgur.com/22wYlQ8.png", "Con vegetales y arroz."),
@@ -154,7 +203,6 @@ object FakeApi {
                 Pair(populares, categorias)
             }
 
-            // ======== Default ========
             else -> Pair(emptyList(), emptyList())
         }
     }

@@ -17,15 +17,11 @@ import kotlinx.serialization.json.Json
 import com.martinezzf.breakbitee.data.ServiceOrderUi
 import com.martinezzf.breakbitee.data.UserOrderItemUi
 import androidx.compose.runtime.compositionLocalOf
-import com.martinezzf.breakbitee.ui.navegation.LocalAllItems
 import com.martinezzf.breakbitee.ui.userScreens.NotificationsScreen
 import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailScreen
 import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailUi
 
-
-
-
-
+// ---------- Otros modelos locales ----------
 
 data class ServiceInfo(
     val id: String,
@@ -153,9 +149,9 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
     fun isUvgEmail(s: String) = s.endsWith("@uvg.edu.gt", ignoreCase = true)
 
-    // 🔹 Fix: Composable context correcto
     CompositionLocalProvider(LocalAllItems provides allItems) {
         NavHost(navController = nav, startDestination = LoginDestination) {
+
             // === LOGIN ===
             composable<LoginDestination> {
                 var email by rememberSaveable { mutableStateOf("") }
@@ -170,13 +166,15 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     onContinue = {
                         if (isUvgEmail(email)) {
                             userEmail = email
-                            userName = email.substringBefore("@").replaceFirstChar { it.titlecase() }
+                            userName = email.substringBefore("@")
+                                .replaceFirstChar { c -> c.titlecase() }
                             nav.navigate(MainDestination) {
                                 popUpTo(LoginDestination) { inclusive = true }
                             }
                         } else {
                             val match = servicesInfo.find {
-                                it.name.equals(email, true) || it.displayName.equals(email, true)
+                                it.name.equals(email, true) ||
+                                        it.displayName.equals(email, true)
                             }
                             if (match != null && match.password == password) {
                                 currentServiceInfo = match
@@ -217,15 +215,15 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                         selectedTab = selectedTab,
                         onTabChange = { selectedTab = it }
                     )
+
                     UserTab.Orders, UserTab.History -> UserOrderHistoryScreen(
                         orders = orders,
                         allItems = allItems,
-                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id, it.serviceName)) },
-
-
+                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id)) },
                         selectedTab = selectedTab,
                         onTabChange = { selectedTab = it }
                     )
+
                     UserTab.Profile -> UserProfileScreen(
                         userName = userName,
                         userEmail = userEmail,
@@ -240,6 +238,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                         },
                         onNotifications = { nav.navigate(NotificationsDestination) }
                     )
+
                     else -> {}
                 }
             }
@@ -276,7 +275,10 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                     description = product.descripcion.ifBlank {
                                         "Producto disponible en ${service.name}"
                                     },
-                                    basePriceQ = product.priceLabel.replace("Q", "").trim().toIntOrNull() ?: 25,
+                                    basePriceQ = product.priceLabel
+                                        .replace("Q", "")
+                                        .trim()
+                                        .toIntOrNull() ?: 25,
                                     imageUrl = product.imageUrl,
                                     parameters = listOf(
                                         ProductParameterUi(
@@ -291,7 +293,10 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                     serviceName = service.name
                                 )
 
-                                val encoded = Json.encodeToString(ProductDetailUi.serializer(), detail)
+                                val encoded = Json.encodeToString(
+                                    ProductDetailUi.serializer(),
+                                    detail
+                                )
                                 nav.navigate(ProductDestination(encoded, service.id))
                             },
                             onCompleteOrder = {
@@ -311,14 +316,18 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             composable<ProductDestination> { entry ->
                 val args = entry.toRoute<ProductDestination>()
                 val product = remember {
-                    Json.decodeFromString(ProductDetailUi.serializer(), args.productJson)
+                    Json.decodeFromString(
+                        ProductDetailUi.serializer(),
+                        args.productJson
+                    )
                 }
 
                 UserProductScreen(
                     product = product,
                     onBack = { nav.popBackStack() },
                     onAddToOrder = { added ->
-                        val existingOrder = orders.find { it.serviceName == added.serviceName }
+                        val existingOrder =
+                            orders.find { it.serviceName == added.serviceName }
                         var currentOrderId: String
 
                         if (existingOrder != null) {
@@ -337,7 +346,10 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                 serviceName = added.serviceName,
                                 totalQ = added.basePriceQ,
                                 productCount = 1,
-                                dateTime = "hoy - ${java.text.SimpleDateFormat("hh:mm a").format(java.util.Date())}",
+                                dateTime = "hoy - ${
+                                    java.text.SimpleDateFormat("hh:mm a")
+                                        .format(java.util.Date())
+                                }",
                                 status = "Pendiente"
                             )
                             orders = orders + newOrder
@@ -361,32 +373,45 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                 imageUrl = added.imageUrl,
                                 quantity = 1,
                                 serviceId = added.serviceName,
-                                orderId = currentOrderId // ✅ aquí ahora sí existe la variable
+                                orderId = currentOrderId
                             )
                         )
 
                         nav.popBackStack()
                     }
-
                 )
             }
 
-            // === VISTA ESTABLECIMIENTO ===
+            // === VISTA ESTABLECIMIENTO (SERVICIO) ===
             composable<ServiceOrdersDestination> {
+
+                // Filtrar pedidos solo del restaurante actual
+                val pedidosFiltrados = serviceOrders.filter {
+                    it.cliente != "Usuario" || currentServiceInfo?.name != null
+                }.filter { order ->
+                    // si guardas order.serviceId, aquí pon:
+                    // order.serviceId == currentServiceInfo?.id
+
+                    // pero tu ServiceOrderUi NO tiene serviceId,
+                    // así que lo estamos trayendo todos por ahora
+                    true
+                }
+
                 ServiceOrdersScreen(
-                    negocio = serviceHeader.name ?: "Tu negocio",
-                    tag = serviceHeader.tag ?: "Sin ubicación",
+                    negocio = currentServiceInfo?.name ?: "Servicio",
+                    tag = serviceHeader.tag,
                     logoUrl = serviceHeader.logoUrl,
-                    orders = serviceOrders,
+
+                    orders = pedidosFiltrados,   //  ⬅️⬅️ MÁGICO
+
                     selectedTab = serviceSelectedTab,
-                    onTabChange = {
-                        serviceSelectedTab = it
-                        if (it == ServiceOrderTab.STORE) nav.navigate(ServiceStoreDestination)
-                    },
-                    onEditHeader = {},
+                    onTabChange = { serviceSelectedTab = it },
+                    onEditHeader = { /*TODO*/ },
+
                     onOpenOrder = { order ->
                         nav.navigate(ServiceOrderDetailDestination(order.id))
                     },
+
                     onLogout = {
                         currentServiceInfo = null
                         nav.navigate(LoginDestination) {
@@ -397,14 +422,14 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             }
 
 
-            // === DETALLE PEDIDO ===
+            // === DETALLE PEDIDO (SERVICIO) ===
             composable<ServiceOrderDetailDestination> { entry ->
                 val args = entry.toRoute<ServiceOrderDetailDestination>()
                 val order = serviceOrders.find { it.id == args.orderId }
 
                 if (order != null) {
                     val orderItems = allItems
-                        .filter { it.orderId == order.id } // ✅ Ahora filtra correctamente por el ID del pedido
+                        .filter { it.orderId == order.id }
                         .map {
                             OrderItemUi(
                                 id = it.id,
@@ -435,17 +460,17 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             composable<OrderDetailDestination> { backStackEntry ->
                 val args = backStackEntry.toRoute<OrderDetailDestination>()
 
-                // 🔹 Filtra solo los ítems que pertenecen al pedido Y al restaurante correcto
                 val selectedOrderItems = allItems.filter { item ->
-                    item.orderId == args.orderId && item.serviceId == args.serviceName
+                    item.orderId == args.orderId
                 }
 
-                println("DEBUG: buscando ${args.orderId} de ${args.serviceName}, encontrados ${selectedOrderItems.size}")
-
                 if (selectedOrderItems.isNotEmpty()) {
+                    val serviceName =
+                        selectedOrderItems.firstOrNull()?.serviceId ?: "Servicio"
+
                     val orderUi = UserOrderDetailUi(
                         id = args.orderId,
-                        serviceName = args.serviceName,
+                        serviceName = serviceName,
                         items = selectedOrderItems.map {
                             com.martinezzf.breakbitee.ui.userScreens.UserOrderItemUi(
                                 id = it.id,
@@ -467,7 +492,6 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 }
             }
 
-
             // === NOTIFICACIONES ===
             composable<NotificationsDestination> {
                 NotificationsScreen(
@@ -475,11 +499,6 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     onBack = { nav.popBackStack() }
                 )
             }
-
-
-
-
-
 
             // === NUEVO PRODUCTO ===
             composable<NewProductDestination> {

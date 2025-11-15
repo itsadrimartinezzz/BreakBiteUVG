@@ -28,11 +28,7 @@ data class ServiceDestination(val serviceId: String)
 
 
 @Serializable
-data class OrderDetailDestination(
-    val orderId: String,
-    val serviceName: String
-)
-
+data class OrderDetailDestination(val orderId: String)
 
 @Serializable
 object NotificationsDestination

@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,6 +15,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.martinezzf.breakbitee.data.FakeApi
+import com.martinezzf.breakbitee.data.ServiceOrderUi     // 👈 IMPORT NUEVO
 
 data class UserOrderItemUi(
     val id: String,
@@ -34,16 +36,45 @@ data class UserOrderDetailUi(
     val totalQ: Int get() = items.sumOf { it.priceQ * it.quantity }
 }
 
+// -------------------------------------------------------
+// 🟢 NUEVO: Función que construye el pedido para FakeApi
+// -------------------------------------------------------
+private fun crearPedidoParaServicio(data: UserOrderDetailUi, userName: String): ServiceOrderUi {
+    return ServiceOrderUi(
+        id = data.id,
+        estado = data.status,
+        cliente = userName,
+        cantidadProductos = data.items.size,
+        total = "Q${data.totalQ}"
+    )
+}
+
 @Composable
 fun UserOrderDetailScreen(
     data: UserOrderDetailUi,
     onBack: () -> Unit
 ) {
-    // 🎨 Verde institucional personalizado
-    val BannerGreen = Color(0xFF2E584A)      // Verde oscuro (antes azul)
-    val LightGreen = Color(0xFF497766)       // Verde medio para botones, acentos
-
+    val BannerGreen = Color(0xFF2E584A)
+    val LightGreen = Color(0xFF497766)
     val colors = MaterialTheme.colorScheme
+
+    // -------------------------------------------------------
+    // 🟢 NUEVO: Enviar el pedido AUTOMÁTICAMENTE al restaurante
+    // -------------------------------------------------------
+    LaunchedEffect(Unit) {
+        val pedido = crearPedidoParaServicio(
+            data = data,
+            userName = "Usuario"    // 👈 Aquí va el nombre del usuario real si lo tienes
+        )
+
+        FakeApi.enviarPedido(
+            restaurante = data.serviceName,
+            pedido = pedido
+        )
+    }
+    // -------------------------------------------------------
+    // (No se tocó nada más del diseño)
+    // -------------------------------------------------------
 
     Scaffold(
         topBar = {

@@ -8,7 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,9 +64,13 @@ fun ServiceOrdersScreen(
             )
         },
         bottomBar = {
-            BottomBarService(selectedTab, onTabChange)
+            BottomBarService(
+                selected = selectedTab,
+                onTabChange = onTabChange
+            )
         }
     ) { padding ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -322,7 +328,9 @@ private fun EmptyOrdersBlock(modifier: Modifier = Modifier) {
                 tint = Color(0xFF6B7280),
                 modifier = Modifier.size(48.dp)
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(
+                Modifier.height(8.dp)
+            )
             Text(
                 "No hay pedidos actuales",
                 color = Color(0xFF6B7280),

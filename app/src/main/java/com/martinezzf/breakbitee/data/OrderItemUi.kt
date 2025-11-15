@@ -9,7 +9,12 @@ data class UserOrderItemUi(
     val priceQ: Int,
     val imageUrl: String? = null,
     val quantity: Int = 1,
-    val serviceId: String = "",
-    val orderId: String
 
+    // 🔥 NECESARIO PARA NAVEGATION
+    val serviceId: String = "",
+    val serviceName: String = "",   // <--- AGREGADO
+
+    val basePriceQ: Int = priceQ,    // <--- AGREGADO (precio base sin multiplicar extras)
+
+    val orderId: String
 )
