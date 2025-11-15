@@ -19,6 +19,10 @@ import com.martinezzf.breakbitee.data.UserOrderItemUi
 import androidx.compose.runtime.compositionLocalOf
 import com.martinezzf.breakbitee.ui.navegation.LocalAllItems
 import com.martinezzf.breakbitee.ui.userScreens.NotificationsScreen
+import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailScreen
+import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailUi
+
+
 
 
 
@@ -216,7 +220,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     UserTab.Orders, UserTab.History -> UserOrderHistoryScreen(
                         orders = orders,
                         allItems = allItems,
-                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id)) },
+                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(orderId = it.id)) },
+
                         selectedTab = selectedTab,
                         onTabChange = { selectedTab = it }
                     )
@@ -313,6 +318,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     onBack = { nav.popBackStack() },
                     onAddToOrder = { added ->
                         val existingOrder = orders.find { it.serviceName == added.serviceName }
+                        var currentOrderId: String
 
                         if (existingOrder != null) {
                             orders = orders.map {
@@ -323,6 +329,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                     )
                                 } else it
                             }
+                            currentOrderId = existingOrder.id
                         } else {
                             val newOrder = OrderUi(
                                 id = "order-${System.currentTimeMillis()}",
@@ -341,6 +348,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                 cantidadProductos = 1,
                                 total = "Q${added.basePriceQ}"
                             )
+
+                            currentOrderId = newOrder.id
                         }
 
                         allItems.add(
@@ -350,12 +359,14 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                 priceQ = added.basePriceQ,
                                 imageUrl = added.imageUrl,
                                 quantity = 1,
-                                serviceId = added.serviceName
+                                serviceId = added.serviceName,
+                                orderId = currentOrderId // ✅ aquí ahora sí existe la variable
                             )
                         )
 
                         nav.popBackStack()
                     }
+
                 )
             }
 
@@ -419,6 +430,44 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 }
             }
 
+            // === DETALLE DE PEDIDO DE USUARIO ===
+            composable<OrderDetailDestination> { backStackEntry ->
+                val args = backStackEntry.toRoute<OrderDetailDestination>()
+
+                // 🔹 Filtra correctamente los ítems que pertenecen al pedido
+                val selectedOrderItems = allItems.filter { item ->
+                    item.serviceId.equals(args.orderId, ignoreCase = true) ||
+                            args.orderId.contains(item.serviceId, ignoreCase = true) ||
+                            item.id.contains(item.serviceId, ignoreCase = true)
+                }
+
+                println("DEBUG: buscando ${args.orderId}, encontrados ${selectedOrderItems.size}")
+
+                if (selectedOrderItems.isNotEmpty()) {
+                    val orderUi = UserOrderDetailUi(
+                        id = args.orderId,
+                        serviceName = selectedOrderItems.first().serviceId,
+                        items = selectedOrderItems.map {
+                            com.martinezzf.breakbitee.ui.userScreens.UserOrderItemUi(
+                                id = it.id,
+                                name = it.name,
+                                priceQ = it.priceQ,
+                                imageUrl = it.imageUrl,
+                                quantity = it.quantity
+                            )
+                        },
+                        status = "Completado"
+                    )
+
+                    UserOrderDetailScreen(
+                        data = orderUi,
+                        onBack = { nav.popBackStack() }
+                    )
+                } else {
+                    Text("Pedido no encontrado")
+                }
+            }
+
             // === NOTIFICACIONES ===
             composable<NotificationsDestination> {
                 NotificationsScreen(
@@ -426,6 +475,10 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     onBack = { nav.popBackStack() }
                 )
             }
+
+
+
+
 
 
             // === NUEVO PRODUCTO ===

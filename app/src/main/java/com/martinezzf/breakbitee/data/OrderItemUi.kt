@@ -9,5 +9,7 @@ data class UserOrderItemUi(
     val priceQ: Int,
     val imageUrl: String? = null,
     val quantity: Int = 1,
-    val serviceId: String = ""
+    val serviceId: String = "",
+    val orderId: String
+
 )
