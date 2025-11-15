@@ -141,8 +141,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
     var serviceOrders by rememberSaveable {
         mutableStateOf(
             listOf(
-                ServiceOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95"),
-                ServiceOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62")
+                ServiceOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95", serviceId = "Cafe Barista"),
+                ServiceOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62", serviceId = "Cafe Barista")
             )
         )
     }
@@ -359,7 +359,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                                 estado = "Pendiente",
                                 cliente = userName,
                                 cantidadProductos = 1,
-                                total = "Q${added.basePriceQ}"
+                                total = "Q${added.basePriceQ}",
+                                serviceId = added.serviceName
                             )
 
                             currentOrderId = newOrder.id
@@ -385,16 +386,9 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             // === VISTA ESTABLECIMIENTO (SERVICIO) ===
             composable<ServiceOrdersDestination> {
 
-                // Filtrar pedidos solo del restaurante actual
-                val pedidosFiltrados = serviceOrders.filter {
-                    it.cliente != "Usuario" || currentServiceInfo?.name != null
-                }.filter { order ->
-                    // si guardas order.serviceId, aquí pon:
-                    // order.serviceId == currentServiceInfo?.id
-
-                    // pero tu ServiceOrderUi NO tiene serviceId,
-                    // así que lo estamos trayendo todos por ahora
-                    true
+                // 🔥 Filtrar pedidos del restaurante actual
+                val pedidosFiltrados = serviceOrders.filter { order ->
+                    order.serviceId == currentServiceInfo?.name
                 }
 
                 ServiceOrdersScreen(
@@ -402,11 +396,11 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     tag = serviceHeader.tag,
                     logoUrl = serviceHeader.logoUrl,
 
-                    orders = pedidosFiltrados,   //  ⬅️⬅️ MÁGICO
+                    orders = pedidosFiltrados,   // 👈 se muestran SOLO los de este restaurante
 
                     selectedTab = serviceSelectedTab,
                     onTabChange = { serviceSelectedTab = it },
-                    onEditHeader = { /*TODO*/ },
+                    onEditHeader = { /* opciones */ },
 
                     onOpenOrder = { order ->
                         nav.navigate(ServiceOrderDetailDestination(order.id))
@@ -420,6 +414,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     }
                 )
             }
+
 
 
             // === DETALLE PEDIDO (SERVICIO) ===

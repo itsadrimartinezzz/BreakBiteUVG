@@ -45,7 +45,8 @@ private fun crearPedidoParaServicio(data: UserOrderDetailUi, userName: String): 
         estado = data.status,
         cliente = userName,
         cantidadProductos = data.items.size,
-        total = "Q${data.totalQ}"
+        total = "Q${data.totalQ}",
+        serviceId = data.serviceName
     )
 }
 

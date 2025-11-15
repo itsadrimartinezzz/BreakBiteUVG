@@ -5,5 +5,8 @@ data class ServiceOrderUi(
     val estado: String,
     val cliente: String,
     val cantidadProductos: Int,
-    val total: String
+    val total: String,
+
+    // 🔥 Nuevo: restaurante dueño del pedido
+    val serviceId: String
 )
