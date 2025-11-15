@@ -21,11 +21,10 @@ data class ServiceOrderDetailDestination(val orderId: String)
 data class ProductDestination(val productJson: String, val serviceId: String)
 
 @Serializable
-object NewProductDestination
+object NewProductDestination   // 👈 DESTINO NUEVO (YA ESTÁ)
 
 @Serializable
 data class ServiceDestination(val serviceId: String)
-
 
 @Serializable
 data class OrderDetailDestination(val orderId: String)

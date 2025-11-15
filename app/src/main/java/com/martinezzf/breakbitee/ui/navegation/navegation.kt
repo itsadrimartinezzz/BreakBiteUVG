@@ -386,34 +386,62 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             // === VISTA ESTABLECIMIENTO (SERVICIO) ===
             composable<ServiceOrdersDestination> {
 
-                // 🔥 Filtrar pedidos del restaurante actual
-                val pedidosFiltrados = serviceOrders.filter { order ->
-                    order.serviceId == currentServiceInfo?.name
+                // 🔥 Control interno de pantalla activa dentro de este destino
+                var mostrarNuevoProducto by remember { mutableStateOf(false) }
+
+                // Si el usuario toca la pestaña "Tienda", cambiamos la pantalla
+                LaunchedEffect(serviceSelectedTab) {
+                    if (serviceSelectedTab == ServiceOrderTab.STORE) {
+                        mostrarNuevoProducto = true
+                    } else {
+                        mostrarNuevoProducto = false
+                    }
                 }
 
-                ServiceOrdersScreen(
-                    negocio = currentServiceInfo?.name ?: "Servicio",
-                    tag = serviceHeader.tag,
-                    logoUrl = serviceHeader.logoUrl,
+                if (mostrarNuevoProducto) {
 
-                    orders = pedidosFiltrados,   // 👈 se muestran SOLO los de este restaurante
-
-                    selectedTab = serviceSelectedTab,
-                    onTabChange = { serviceSelectedTab = it },
-                    onEditHeader = { /* opciones */ },
-
-                    onOpenOrder = { order ->
-                        nav.navigate(ServiceOrderDetailDestination(order.id))
-                    },
-
-                    onLogout = {
-                        currentServiceInfo = null
-                        nav.navigate(LoginDestination) {
-                            popUpTo(ServiceOrdersDestination) { inclusive = true }
+                    // ⭐ SE MUESTRA la pantalla de nuevo producto
+                    NewProductScreen(
+                        onBack = {
+                            mostrarNuevoProducto = false
+                            serviceSelectedTab = ServiceOrderTab.ORDERS
                         }
+                    )
+
+                } else {
+
+                    // 🔥 Filtrar pedidos del restaurante actual
+                    val pedidosFiltrados = serviceOrders.filter { order ->
+                        order.serviceId == currentServiceInfo?.name
                     }
-                )
+
+                    // ⭐ SE MUESTRA la pantalla normal de pedidos
+                    ServiceOrdersScreen(
+                        negocio = currentServiceInfo?.name ?: "Servicio",
+                        tag = serviceHeader.tag,
+                        logoUrl = serviceHeader.logoUrl,
+
+                        orders = pedidosFiltrados,
+
+                        selectedTab = serviceSelectedTab,
+                        onTabChange = { serviceSelectedTab = it },
+                        onEditHeader = { },
+
+                        onOpenOrder = { order ->
+                            nav.navigate(ServiceOrderDetailDestination(order.id))
+                        },
+
+                        onLogout = {
+                            currentServiceInfo = null
+                            nav.navigate(LoginDestination) {
+                                popUpTo(ServiceOrdersDestination) { inclusive = true }
+                            }
+                        }
+                    )
+                }
             }
+
+
 
 
 
@@ -497,8 +525,11 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
             // === NUEVO PRODUCTO ===
             composable<NewProductDestination> {
-                NewProductScreen(onBack = { nav.popBackStack() })
+                NewProductScreen(
+                    onBack = { nav.popBackStack() }
+                )
             }
+
         }
     }
 }
