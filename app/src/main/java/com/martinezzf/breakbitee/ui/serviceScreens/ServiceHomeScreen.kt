@@ -371,20 +371,3 @@ private fun BottomBar2(selected: ServiceTab, onTabChange: (ServiceTab) -> Unit) 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-private fun PreviewServiceHome_Empty() {
-    ServiceHomeScreen(
-        header = ServiceHeaderUi(name = null, tag = "Tag"),
-        popular = emptyList(),
-        categories = emptyList(),
-        selectedTab = ServiceTab.ORDERS,
-        onTabChange = {},
-        onAddCategory = {},
-        onAddPopularProduct = {},
-        onOpenProduct = {},
-        onEditHeader = {},
-        onLogout = {}
-    )
-}

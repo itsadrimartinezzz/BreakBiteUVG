@@ -27,9 +27,12 @@ object NewProductDestination
 data class ServiceDestination(val serviceId: String)
 
 
-// 🔹 FALTABAN ESTOS 🔹
 @Serializable
-data class OrderDetailDestination(val orderId: String)
+data class OrderDetailDestination(
+    val orderId: String,
+    val serviceName: String
+)
+
 
 @Serializable
 object NotificationsDestination

@@ -220,7 +220,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     UserTab.Orders, UserTab.History -> UserOrderHistoryScreen(
                         orders = orders,
                         allItems = allItems,
-                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(orderId = it.id)) },
+                        onOpenOrderDetail = { nav.navigate(OrderDetailDestination(it.id, it.serviceName)) },
+
 
                         selectedTab = selectedTab,
                         onTabChange = { selectedTab = it }
@@ -403,7 +404,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
                 if (order != null) {
                     val orderItems = allItems
-                        .filter { it.serviceId == order.cliente }
+                        .filter { it.orderId == order.id } // ✅ Ahora filtra correctamente por el ID del pedido
                         .map {
                             OrderItemUi(
                                 id = it.id,
@@ -434,19 +435,17 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             composable<OrderDetailDestination> { backStackEntry ->
                 val args = backStackEntry.toRoute<OrderDetailDestination>()
 
-                // 🔹 Filtra correctamente los ítems que pertenecen al pedido
+                // 🔹 Filtra solo los ítems que pertenecen al pedido Y al restaurante correcto
                 val selectedOrderItems = allItems.filter { item ->
-                    item.serviceId.equals(args.orderId, ignoreCase = true) ||
-                            args.orderId.contains(item.serviceId, ignoreCase = true) ||
-                            item.id.contains(item.serviceId, ignoreCase = true)
+                    item.orderId == args.orderId && item.serviceId == args.serviceName
                 }
 
-                println("DEBUG: buscando ${args.orderId}, encontrados ${selectedOrderItems.size}")
+                println("DEBUG: buscando ${args.orderId} de ${args.serviceName}, encontrados ${selectedOrderItems.size}")
 
                 if (selectedOrderItems.isNotEmpty()) {
                     val orderUi = UserOrderDetailUi(
                         id = args.orderId,
-                        serviceName = selectedOrderItems.first().serviceId,
+                        serviceName = args.serviceName,
                         items = selectedOrderItems.map {
                             com.martinezzf.breakbitee.ui.userScreens.UserOrderItemUi(
                                 id = it.id,
@@ -467,6 +466,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     Text("Pedido no encontrado")
                 }
             }
+
 
             // === NOTIFICACIONES ===
             composable<NotificationsDestination> {

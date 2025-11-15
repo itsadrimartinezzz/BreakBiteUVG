@@ -8,7 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,89 +31,119 @@ fun ServiceOrderDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle del pedido") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Detalles del ",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "Bu",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2E584A),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = Color(0xFF2E584A)
                 )
             )
+        },
+        bottomBar = {
+            if (order.estado != "Completado") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.Transparent)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Button(
+                        onClick = onComplete,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2E584A)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            "Marcar como completado",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
         }
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 🔹 Encabezado del pedido
+            // 🔹 Encabezado con info del pedido
             item {
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(16.dp)
+                        .background(Color(0xFFF5F4F8))
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Surface(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(50)),
+                        color = Color(0xFFD9D9D9)
+                    ) {}
+
+                    Spacer(Modifier.width(12.dp))
+
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = order.estado,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFF2E584A),
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = order.cliente,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = "${order.cantidadProductos} producto(s)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+
                     Text(
-                        "Cliente: ${order.cliente}",
+                        text = order.total,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "Estado: ${order.estado}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = when (order.estado) {
-                            "Pendiente" -> Color(0xFFFF9800)
-                            "En preparación" -> Color(0xFF2196F3)
-                            "Completado" -> Color(0xFF4CAF50)
-                            else -> MaterialTheme.colorScheme.onSurface
-                        }
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "Total: ${order.total}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF2E584A)
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // 🔹 Sección de productos
-            item {
-                Text(
-                    "Productos del pedido",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
+            // 🔹 Lista de productos
             items(items) { item ->
                 OrderItemCard(item)
-            }
-
-            // 🔹 Botón de completar pedido
-            if (order.estado != "Completado") {
-                item {
-                    Button(
-                        onClick = onComplete,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Marcar como completado")
-                    }
-                }
             }
 
             item { Spacer(Modifier.height(80.dp)) }
@@ -126,45 +156,40 @@ private fun OrderItemCard(item: OrderItemUi) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFE8F0F2))
-            .padding(12.dp),
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFE7EFEA)) // ✅ Fondo verde suave como en la imagen
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             model = item.imageUrl.ifEmpty { null },
             contentDescription = item.nombre,
             modifier = Modifier
-                .size(56.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFCFD8DC)),
+                .size(70.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFFD9D9D9)),
             contentScale = ContentScale.Crop
         )
 
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(14.dp))
 
-        Column(Modifier.weight(1f)) {
-            Text(
-                item.nombre,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                "Q${item.precio}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF2E584A)
-            )
-        }
-
-        Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = if (item.listo) Color(0xFF4CAF50) else Color(0xFFFF9800),
-            modifier = Modifier.padding(start = 8.dp)
+        Column(
+            modifier = Modifier.weight(1f)
         ) {
             Text(
-                if (item.listo) "✓" else "⏱",
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                color = Color.White
+                text = item.nombre,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = "Q${item.precio}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
             )
         }
     }
