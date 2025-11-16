@@ -1,3 +1,7 @@
+/**
+ * Consiste en un composable intermediario que conecta el FakeApi, escuchar el tiempo real de pedidos del restaurante y pasar los pedidos a ServiceOrderScreen.
+ */
+
 package com.martinezzf.breakbitee.ui.serviceScreens
 
 import androidx.compose.runtime.*
@@ -14,14 +18,16 @@ fun ServiceOrdersScreenWrapper(
     onOpenOrder: (ServiceOrderUi) -> Unit,
     onLogout: () -> Unit
 ) {
+    //Obtiene los pedidos del restaurante en tiempo real
     val pedidosState = FakeApi.getPedidos(restaurante).collectAsState()
 
-    // Pedidos para este restaurante
+    //Extrae la lista actual del restaurante
     val orders = pedidosState.value
 
-    // Tab default
+    //Controla la pestaña seleccionada (bottom bar)
     var selectedTab by remember { mutableStateOf(ServiceTab.ORDERS) }
 
+    //Llama a la pantalla de ServiceOrdersScreen para pasar la informacion.
     ServiceOrdersScreen(
         negocio = restaurante,
         tag = tag,
