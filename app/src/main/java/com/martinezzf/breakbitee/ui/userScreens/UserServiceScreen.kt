@@ -1,3 +1,7 @@
+/**
+ * Pnatalla del usuario cuando entra y ve el menu de un restaurante.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.background
@@ -22,14 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
-// Colores base
 private val BannerGreen = Color(0xFF2E584A)
 private val CardBg = Color(0xFFF2F4F5)
 private val ItemBg = Color(0xFFE7EFEA)
 
-/**
- * Modelo para productos simples (API simulada)
- */
+//Modelo simplificado de un producto usado para mostrar los productos dentro del menu del restaurante.
 data class SimpleProductUi(
     val id: String,
     val name: String,
@@ -38,18 +39,14 @@ data class SimpleProductUi(
     val descripcion: String = ""
 )
 
-/**
- * Modelo para categorías simples (API simulada)
- */
+//Modelo simplificado de una categoria para mostrar los productos dentro del menu del restaurante.
 data class SimpleCategoryUi(
     val id: String,
     val name: String,
     val products: List<SimpleProductUi>
 )
 
-/**
- * Pantalla principal del usuario dentro del restaurante.
- */
+//Composable de la pantalla del menu, UserServiceScreen.
 @Composable
 fun UserServiceScreen(
     serviceName: String,
@@ -127,9 +124,7 @@ fun UserServiceScreen(
     }
 }
 
-/**
- * Header superior con nombre del restaurante y botón de regreso.
- */
+//Composable del titulo del restaurante
 @Composable
 private fun Header(serviceName: String, onBack: () -> Unit) {
     Column {
@@ -160,9 +155,7 @@ private fun Header(serviceName: String, onBack: () -> Unit) {
     }
 }
 
-/**
- * Título de cada sección (populares, categorías).
- */
+//Composable del titulo de cada seccion.
 @Composable
 private fun SectionTitle(title: String) {
     Text(
@@ -172,9 +165,7 @@ private fun SectionTitle(title: String) {
     )
 }
 
-/**
- * Grid de productos populares.
- */
+//Composable de PopularGrid.
 @Composable
 private fun PopularGrid(
     products: List<SimpleProductUi>,
@@ -213,9 +204,7 @@ private fun PopularGrid(
     }
 }
 
-/**
- * Tarjeta horizontal de producto (usada en categorías).
- */
+//Composable de productRowCard
 @Composable
 private fun ProductRowCard(
     product: SimpleProductUi,
@@ -252,9 +241,7 @@ private fun ProductRowCard(
     }
 }
 
-/**
- * Botón inferior para finalizar pedido.
- */
+//Composable de completar pedido, bottombar.
 @Composable
 private fun BottomBar(onCompleteOrder: () -> Unit) {
     Row(
