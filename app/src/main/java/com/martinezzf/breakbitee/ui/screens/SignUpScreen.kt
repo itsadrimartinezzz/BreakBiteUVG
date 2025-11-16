@@ -1,6 +1,10 @@
+/**
+ * Composable que construye la pantalla de SigUpScreen.
+ */
+
 package com.martinezzf.breakbitee.ui.screens
 
-
+//Imports
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
@@ -20,6 +24,7 @@ import com.martinezzf.breakbitee.ui.screens.components.GoogleButton
 import com.martinezzf.breakbitee.ui.screens.components.LinkText
 import com.martinezzf.breakbitee.ui.screens.components.PrimaryButton
 
+//Permite registar usuarios con @uvg.edu.gt y los servicios.
 @Composable
 fun SignUpScreen(
     uvgEmail: String,
