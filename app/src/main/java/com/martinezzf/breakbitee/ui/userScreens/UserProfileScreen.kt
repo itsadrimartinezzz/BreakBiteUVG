@@ -1,3 +1,7 @@
+/**
+ * Pantalla donde el usuario ve y gestiona su perfil.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.background
@@ -21,6 +25,7 @@ import com.martinezzf.breakbitee.LocalDarkModeHandler
 
 private val BannerGreen = Color(0xFF2E584A)
 
+//Composable para la pantalla de profiel, UserProfileScreen
 @Composable
 fun UserProfileScreen(
     userName: String,
@@ -30,8 +35,7 @@ fun UserProfileScreen(
     onLogout: () -> Unit,
     onNotifications: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+
     var darkMode by remember { mutableStateOf(false) }
 
     Scaffold(
