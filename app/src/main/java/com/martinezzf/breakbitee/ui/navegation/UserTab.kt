@@ -1,10 +1,14 @@
+/**
+ * Define un enum UserTab, representando diferentes pestañas que puede ver el usuario en la aplicacoin.
+ */
+
 package com.martinezzf.breakbitee.ui.navegation
 
 
 enum class UserTab {
-    Home,
-    Profile,
-    Orders,
+    Home, //Pantalla principal del usuario
+    Profile, //Pnantalla de perfil del usuario
+    Orders, //Lista de pedidos activos
     Notifications,
-    History
+    History //Historial de pedidos
 }
