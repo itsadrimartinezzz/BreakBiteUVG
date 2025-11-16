@@ -21,10 +21,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.martinezzf.breakbitee.data.UserOrderItemUi
 import com.martinezzf.breakbitee.data.ServiceOrderUi
+import com.martinezzf.breakbitee.data.FakeApi
+import com.martinezzf.breakbitee.ui.userScreens.NotificationType
+import com.martinezzf.breakbitee.ui.userScreens.UserNotification
 
-//Composable de ServiceOrderDetailScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceOrderDetailScreen(
@@ -76,7 +77,17 @@ fun ServiceOrderDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Button(
-                        onClick = onComplete,
+                        onClick = {
+
+                            //Envia la notificacion de que ya esta listo el pedido del usuario
+                            val notif = UserNotification(
+                                id = order.id,
+                                type = NotificationType.READY,
+                                message = "Tu pedido ${order.id} está listo para recoger."
+                            )
+                            FakeApi.sendNotificationToUser(notif)
+                            onComplete()
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF2E584A)
@@ -100,7 +111,6 @@ fun ServiceOrderDetailScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 🔹 Encabezado con info del pedido
             item {
                 Row(
                     modifier = Modifier
@@ -146,7 +156,6 @@ fun ServiceOrderDetailScreen(
                 }
             }
 
-            // 🔹 Lista de productos
             items(items) { item ->
                 OrderItemCard(item)
             }
@@ -156,14 +165,13 @@ fun ServiceOrderDetailScreen(
     }
 }
 
-//Composable del OrderItemCard
 @Composable
 private fun OrderItemCard(item: OrderItemUi) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFE7EFEA)) // ✅ Fondo verde suave como en la imagen
+            .background(Color(0xFFE7EFEA))
             .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

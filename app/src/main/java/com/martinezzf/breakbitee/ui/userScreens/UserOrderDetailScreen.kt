@@ -67,16 +67,27 @@ fun UserOrderDetailScreen(
 
     //Envia el pedido al servicio del restaurante.
     LaunchedEffect(Unit) {
+
+        val userName = "Usuario"
+
         val pedido = crearPedidoParaServicio(
             data = data,
-            userName = "Usuario"
+            userName = userName
         )
 
-        FakeApi.enviarPedido(
-            restaurante = data.serviceName,
-            pedido = pedido
+        FakeApi.enviarPedido(restaurante = data.serviceName, pedido = pedido)
+
+        //Envia la notificacion de pedido del usuario al restaurante
+        FakeApi.sendNotificationToUser(
+            UserNotification(
+                id = pedido.id,
+                type = NotificationType.RECEIVED,
+                message = "Tu pedido fue enviado correctamente a ${data.serviceName}."
+            )
         )
     }
+
+
 
     Scaffold(
         topBar = {

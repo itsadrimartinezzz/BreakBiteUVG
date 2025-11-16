@@ -550,11 +550,16 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
             // === NOTIFICACIONES ===
             composable<NotificationsDestination> {
+
+                //Obtienel las notificaciones desde FakeApi
+                val notificationsFromApi = FakeApi.getUserNotifications().collectAsState().value
+
                 NotificationsScreen(
-                    notifications = notifications,
+                    notifications = notificationsFromApi,
                     onBack = { nav.popBackStack() }
                 )
             }
+
 
             // === NUEVO PRODUCTO ===
             composable<NewProductDestination> {

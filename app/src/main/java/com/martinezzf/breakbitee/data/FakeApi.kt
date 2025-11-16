@@ -10,6 +10,7 @@ package com.martinezzf.breakbitee.data
 //Import
 import com.martinezzf.breakbitee.ui.userScreens.SimpleCategoryUi
 import com.martinezzf.breakbitee.ui.userScreens.SimpleProductUi
+import com.martinezzf.breakbitee.ui.userScreens.UserNotification
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -52,6 +53,27 @@ object FakeApi {
             else -> MutableStateFlow(emptyList())
         }
     }
+
+    // -----------------------------------------------------------
+    // 🔔 NOTIFICACIONES DEL USUARIO
+    // -----------------------------------------------------------
+
+        private val _userNotifications =
+            MutableStateFlow<List<UserNotification>>(emptyList())
+
+        /**
+         * Devuelve todas las notificaciones del usuario como StateFlow,
+         * permitiendo que la UI se actualice automáticamente.
+         */
+        fun getUserNotifications(): StateFlow<List<UserNotification>> = _userNotifications
+
+        /**
+         * Agrega una nueva notificación al usuario.
+         */
+        fun sendNotificationToUser(notification: UserNotification) {
+            _userNotifications.value = _userNotifications.value + notification
+        }
+
 
     /**
      * Devuelve el menu del restaurante segun su serviceId.
