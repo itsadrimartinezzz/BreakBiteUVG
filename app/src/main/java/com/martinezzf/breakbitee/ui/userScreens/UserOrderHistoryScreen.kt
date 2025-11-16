@@ -1,3 +1,7 @@
+/**
+ * La pantalla donde el usuario puede ver todos los pedidos que se ha hecho anteriormente.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.background
@@ -21,7 +25,7 @@ import com.martinezzf.breakbitee.data.OrderUi
 import com.martinezzf.breakbitee.ui.navegation.UserTab
 import com.martinezzf.breakbitee.data.UserOrderItemUi
 
-
+//Composable de la pantalla de UserOderHistoryScreen
 @Composable
 fun UserOrderHistoryScreen(
     orders: List<OrderUi>,
@@ -30,7 +34,6 @@ fun UserOrderHistoryScreen(
     selectedTab: UserTab,
     onTabChange: (UserTab) -> Unit
 ) {
-    // 🎨 Verdes institucionales (solo para acento)
     val BannerGreen = Color(0xFF2E584A)
     val LightGreen = Color(0xFF497766)
     val colors = MaterialTheme.colorScheme
@@ -84,6 +87,8 @@ fun UserOrderHistoryScreen(
     }
 }
 
+
+//Composable de la estructura de pedidos, OrderCard.
 @Composable
 private fun OrderCard(
     order: OrderUi,
@@ -105,6 +110,7 @@ private fun OrderCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
+                    //logos de cada restaurante.
                     model = when (order.serviceName) {
                         "Cafe Barista" -> "https://media.licdn.com/dms/image/v2/C4D0BAQG0iaY0mTFOtg/company-logo_200_200/company-logo_200_200/0/1676502742315/caf_barista_logo?e=2147483647&v=beta&t=RdzwCEyGJJeYckb8KiViPVjlcNdx3t6eEXkxJXe_9g0"
                         "& Cafe" -> "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTHCi3JodBohfzg0Cr5tQ_Z9nlZuLo58XNDg&s"
@@ -204,7 +210,6 @@ private fun OrderCard(
 
             Spacer(Modifier.height(12.dp))
 
-            // 🟢 Botón "Ver Pedido"
             Button(
                 onClick = { onOpenOrderDetail(order) },
                 modifier = Modifier
