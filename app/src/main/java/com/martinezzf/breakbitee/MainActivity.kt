@@ -1,3 +1,7 @@
+/**
+ * MainActivity
+ */
+
 package com.martinezzf.breakbitee
 
 
@@ -19,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+            //Variable para la funcion de modo oscuro.
             var darkMode by remember { mutableStateOf(false) }
 
             CompositionLocalProvider(

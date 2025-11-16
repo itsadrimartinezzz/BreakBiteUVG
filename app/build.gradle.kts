@@ -10,8 +10,6 @@ plugins {
 
 android {
     namespace = "com.martinezzf.breakbitee"
-
-    // ✅ DSL correcto
     compileSdk = 36
 
     defaultConfig {
@@ -34,14 +32,12 @@ android {
         }
     }
 
-    // Con AGP 8.x te conviene Java 17
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
-// Kotlin 2.2.x → usa toolchain (evita el warning de jvmTarget "String")
 kotlin {
     jvmToolchain(17)
 }
@@ -67,13 +63,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // ✅ nuevo alias (renombrado)
     implementation(libs.compose.material.icons.extended)
 
-    // ✅ usa UNA sola serialization (la normal del catálogo)
     implementation(libs.kotlinx.serialization.json)
-
-    // ✅ usa la normal de navigation
+    
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.coil.compose)
