@@ -1,3 +1,7 @@
+/**
+ * Pantalla de confirmacion de pedido enviado que se muestra al usuario luego de realizar un pedido.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 
@@ -21,6 +25,7 @@ import com.martinezzf.breakbitee.R
 
 private val BannerGreen = Color(0xFF2E584A)
 
+//Composable de OrdercompletedScreen
 @Composable
 fun OrderCompletedScreen() {
     Box(
@@ -64,7 +69,7 @@ fun OrderCompletedScreen() {
     }
 }
 
-
+//Lo vuelve un autoretorno para regresar a la pantalla donde estan los restaurantes (UserHomeScreen)
 @Composable
 fun OrderCompletedScreenAuto(onDone: () -> Unit, delayMs: Long = 4000L) {
     LaunchedEffect(Unit) {
