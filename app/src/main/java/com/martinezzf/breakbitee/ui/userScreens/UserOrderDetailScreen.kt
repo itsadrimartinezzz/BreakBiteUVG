@@ -1,3 +1,7 @@
+/**
+ * Pnatalla donde el usuario mas a detalle el pedido que acaba de realizar.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.background
@@ -18,6 +22,7 @@ import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.FakeApi
 import com.martinezzf.breakbitee.data.ServiceOrderUi     // 👈 IMPORT NUEVO
 
+//Data class UserOderitemUi
 data class UserOrderItemUi(
     val id: String,
     val name: String,
@@ -26,6 +31,7 @@ data class UserOrderItemUi(
     val quantity: Int = 1
 )
 
+//data class UserOderdetailUi
 data class UserOrderDetailUi(
     val id: String,
     val serviceName: String,
@@ -36,9 +42,8 @@ data class UserOrderDetailUi(
     val totalQ: Int get() = items.sumOf { it.priceQ * it.quantity }
 }
 
-// -------------------------------------------------------
-// 🟢 NUEVO: Función que construye el pedido para FakeApi
-// -------------------------------------------------------
+
+//Construye el pedido en el fakeapi
 private fun crearPedidoParaServicio(data: UserOrderDetailUi, userName: String): ServiceOrderUi {
     return ServiceOrderUi(
         id = data.id,
@@ -50,6 +55,7 @@ private fun crearPedidoParaServicio(data: UserOrderDetailUi, userName: String): 
     )
 }
 
+//Composable de UserOrderDetailScreen
 @Composable
 fun UserOrderDetailScreen(
     data: UserOrderDetailUi,
@@ -59,13 +65,11 @@ fun UserOrderDetailScreen(
     val LightGreen = Color(0xFF497766)
     val colors = MaterialTheme.colorScheme
 
-    // -------------------------------------------------------
-    // 🟢 NUEVO: Enviar el pedido AUTOMÁTICAMENTE al restaurante
-    // -------------------------------------------------------
+    //Envia el pedido al servicio del restaurante.
     LaunchedEffect(Unit) {
         val pedido = crearPedidoParaServicio(
             data = data,
-            userName = "Usuario"    // 👈 Aquí va el nombre del usuario real si lo tienes
+            userName = "Usuario"
         )
 
         FakeApi.enviarPedido(
@@ -73,9 +77,6 @@ fun UserOrderDetailScreen(
             pedido = pedido
         )
     }
-    // -------------------------------------------------------
-    // (No se tocó nada más del diseño)
-    // -------------------------------------------------------
 
     Scaffold(
         topBar = {
@@ -144,7 +145,6 @@ fun UserOrderDetailScreen(
                 )
                 .background(colors.background)
         ) {
-            // 🟩 TARJETA PRINCIPAL
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = colors.surface,
@@ -193,7 +193,6 @@ fun UserOrderDetailScreen(
                 }
             }
 
-            // 🟢 LISTA DE ITEMS
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
