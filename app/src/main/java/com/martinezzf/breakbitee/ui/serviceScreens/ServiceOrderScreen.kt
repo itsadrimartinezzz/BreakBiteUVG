@@ -297,19 +297,11 @@ private fun OrderCard(
 
         Spacer(Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                order.total,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF2E584A)
-            )
-        }
+        // 🔥 Precio removido
+        // Antes aquí había un Row con order.total
     }
 }
+
 
 @Composable
 private fun EmptyOrdersBlock(modifier: Modifier = Modifier) {

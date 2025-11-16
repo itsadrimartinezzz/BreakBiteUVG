@@ -12,13 +12,6 @@ data class ServiceHeaderUi(
     val logoUrl: String = ""
 )
 
-data class ServiceOrderUi(
-    val id: String,
-    val estado: String,
-    val cliente: String,
-    val cantidadProductos: Int,
-    val total: String
-)
 
 data class OrderItemUi(
     val id: String,

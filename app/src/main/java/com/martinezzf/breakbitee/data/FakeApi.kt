@@ -1,5 +1,13 @@
+/**
+ * Fake api: actua como una API falsa interna para la aplicacion. Se utiliza principalmente para simular un servidor real sin el uso de internet utilizando stateFlow para que la UI se actualice.
+ * 1. Principales funciones: Guardar pedidos por restaurante (barista, &cafe, gitane, go green, panitos, mixtas frankfurt, golden harvest)
+ * 2. Agregar pedidos
+ * 3. Devuelve los pedidos de un restaurante
+ * 4. Devuelve menu completo por servicio
+*/
 package com.martinezzf.breakbitee.data
 
+//Import
 import com.martinezzf.breakbitee.ui.userScreens.SimpleCategoryUi
 import com.martinezzf.breakbitee.ui.userScreens.SimpleProductUi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -7,10 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 object FakeApi {
 
-    // -------------------------------------------------------
-    // SISTEMA DE PEDIDOS — AÑADIDO SIN ROMPER NADA
-    // -------------------------------------------------------
 
+    //Utiliza MutableStateFlow para almacenar los pedidos de ServiceOrderUi que es la perspectiva de servicio del restaurante.
     private val barista = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
     private val cafe = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
     private val gitane = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
@@ -19,10 +25,9 @@ object FakeApi {
     private val mixtas = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
     private val golden = MutableStateFlow<List<ServiceOrderUi>>(emptyList())
 
-    /**
-     * Agregar pedido al restaurante correcto
-     */
+    //La funcion recibe un restaurante y un pedido. Agregando el pedido a la lista correspondiente dentro del FakeApi.
     fun enviarPedido(restaurante: String, pedido: ServiceOrderUi) {
+        //Utiliza when para determinar a que restaurante se debe mandar.
         when (restaurante.lowercase()) {
             "barista" -> barista.value = barista.value + pedido
             "& cafe", "cafe" -> cafe.value = cafe.value + pedido
@@ -34,9 +39,7 @@ object FakeApi {
         }
     }
 
-    /**
-     * Obtener pedidos para un restaurante
-     */
+    //Regresa la lista de pedidos del restaurante en donde el usuario pide.
     fun getPedidos(restaurante: String): StateFlow<List<ServiceOrderUi>> {
         return when (restaurante.lowercase()) {
             "barista" -> barista
@@ -50,13 +53,9 @@ object FakeApi {
         }
     }
 
-    // -------------------------------------------------------
-    // TODO EL CÓDIGO ORIGINAL DEL MENÚ ↓↓↓  (NO TOCADO)
-    // -------------------------------------------------------
-
     /**
-     * Devuelve un par con productos populares y categorías por servicio.
-     * El formato es: Pair<List<SimpleProductUi>, List<SimpleCategoryUi>>
+     * Devuelve el menu del restaurante segun su serviceId.
+     * Tiene la estructura de Pair( listaDeProductosPopulares, listaDeCategoriasConSusProductos)
      */
     fun getMenuForService(serviceId: String): Pair<List<SimpleProductUi>, List<SimpleCategoryUi>> {
         return when (serviceId) {
