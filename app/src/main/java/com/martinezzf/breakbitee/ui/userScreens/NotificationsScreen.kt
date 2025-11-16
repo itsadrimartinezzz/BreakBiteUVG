@@ -1,3 +1,7 @@
+/**
+ * Pantalla donde el usuario ve las notificaciones para confirmar sus pedidos.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 
@@ -21,20 +25,24 @@ import androidx.compose.ui.unit.dp
 private val BannerGreen = Color(0xFF2E584A)
 private val CardGreen   = Color(0xFF497766)
 
+//Tipos de notificaciones
 enum class NotificationType { RECEIVED, READY }
 
+//Data class de notificacion
 data class UserNotification(
-    val id: String,
-    val type: NotificationType,
-    val message: String
+    val id: String, //id de notificacion
+    val type: NotificationType, //Tipo de notificacion
+    val message: String //Mensaje de la notificacion
 )
 
+//Genera un mensaje por defecto
 fun defaultMessageFor(type: NotificationType): String =
     when (type) {
         NotificationType.RECEIVED -> "El local ha recibido tu pedido correctamente"
         NotificationType.READY    -> "El pedido está listo para que lo vayas a recoger"
     }
 
+//Composable de la pantalla de notificaciones
 @Composable
 fun NotificationsScreen(
     notifications: List<UserNotification>,
@@ -81,6 +89,7 @@ fun NotificationsScreen(
     }
 }
 
+//Composable de la carta de notificacion
 @Composable
 private fun NotificationCard(message: String) {
     Surface(
