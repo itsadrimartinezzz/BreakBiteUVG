@@ -1,3 +1,7 @@
+/**
+ * Pantalla donde servicio puede ver los detalles de una orden y marcar la orden completado.
+ */
+
 package com.martinezzf.breakbitee.ui.serviceScreens
 
 import androidx.compose.foundation.background
@@ -20,6 +24,7 @@ import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.UserOrderItemUi
 import com.martinezzf.breakbitee.data.ServiceOrderUi
 
+//Composable de ServiceOrderDetailScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceOrderDetailScreen(
@@ -151,6 +156,7 @@ fun ServiceOrderDetailScreen(
     }
 }
 
+//Composable del OrderItemCard
 @Composable
 private fun OrderItemCard(item: OrderItemUi) {
     Row(
