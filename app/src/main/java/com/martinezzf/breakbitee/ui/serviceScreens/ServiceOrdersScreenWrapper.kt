@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import com.martinezzf.breakbitee.data.FakeApi
 import com.martinezzf.breakbitee.data.ServiceOrderUi
+import com.martinezzf.breakbitee.ui.serviceScreens.ServiceTab
 
 @Composable
 fun ServiceOrdersScreenWrapper(
@@ -19,7 +20,7 @@ fun ServiceOrdersScreenWrapper(
     val orders = pedidosState.value
 
     // Tab default
-    var selectedTab by remember { mutableStateOf(ServiceOrderTab.ORDERS) }
+    var selectedTab by remember { mutableStateOf(ServiceTab.ORDERS) }
 
     ServiceOrdersScreen(
         negocio = restaurante,

@@ -154,7 +154,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
     }
 
     //Recuerda las pestañas seleccionadas en la pantalla de servicio.
-    var serviceSelectedTab by rememberSaveable { mutableStateOf(ServiceOrderTab.ORDERS) }
+    var serviceSelectedTab by rememberSaveable { mutableStateOf(ServiceTab.ORDERS) }
 
     //Guarda la informacion del servicio en la que se encuentra en ese momento.
     var currentServiceInfo by remember { mutableStateOf<ServiceInfo?>(null) }
@@ -430,7 +430,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 var mostrarNuevoProducto by remember { mutableStateOf(false) }
 
                 LaunchedEffect(serviceSelectedTab) {
-                    if (serviceSelectedTab == ServiceOrderTab.STORE) {
+                    if (serviceSelectedTab == ServiceTab.STORE) {
                         mostrarNuevoProducto = true
                     } else {
                         mostrarNuevoProducto = false
@@ -442,7 +442,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                     NewProductScreen(
                         onBack = {
                             mostrarNuevoProducto = false
-                            serviceSelectedTab = ServiceOrderTab.ORDERS
+                            serviceSelectedTab = ServiceTab.ORDERS
                         }
                     )
 

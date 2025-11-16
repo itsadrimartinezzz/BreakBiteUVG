@@ -1,3 +1,8 @@
+/**
+ * Pantalla principal donde se puede observar los pedidos que llegan al negocio.
+ * Solo los restaurantes pueden ver sus respectivos productos.
+ */
+
 package com.martinezzf.breakbitee.ui.serviceScreens
 
 import androidx.compose.foundation.background
@@ -22,12 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.ServiceOrderUi
+import com.martinezzf.breakbitee.ui.serviceScreens.ServiceTab
 
-// Enum para las pestañas del restaurante
-enum class ServiceOrderTab {
-    ORDERS, STORE
-}
-
+//Composable de ServiceOrdersScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceOrdersScreen(
@@ -35,12 +37,14 @@ fun ServiceOrdersScreen(
     tag: String?,
     logoUrl: String,
     orders: List<ServiceOrderUi>,
-    selectedTab: ServiceOrderTab,
-    onTabChange: (ServiceOrderTab) -> Unit,
+    selectedTab: ServiceTab,
+    onTabChange: (ServiceTab) -> Unit,
     onEditHeader: () -> Unit,
     onOpenOrder: (ServiceOrderUi) -> Unit,
     onLogout: () -> Unit
 ) {
+
+    //Variable de estado que indica si se debe mostrar la opcion de cerrar sesion
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -149,6 +153,7 @@ fun ServiceOrdersScreen(
     }
 }
 
+//Composable de ServiceHeaderWithLogo
 @Composable
 private fun ServiceHeaderWithLogo(
     negocio: String,
@@ -240,6 +245,7 @@ private fun ServiceHeaderWithLogo(
     }
 }
 
+//Composable de OrderCard
 @Composable
 private fun OrderCard(
     order: ServiceOrderUi,
@@ -302,7 +308,7 @@ private fun OrderCard(
     }
 }
 
-
+//Composable de EmptyOrdersBlock
 @Composable
 private fun EmptyOrdersBlock(modifier: Modifier = Modifier) {
     Box(
@@ -332,15 +338,16 @@ private fun EmptyOrdersBlock(modifier: Modifier = Modifier) {
     }
 }
 
+//Composable de BottomBar, barra inferior de navegacion
 @Composable
 private fun BottomBarService(
-    selected: ServiceOrderTab,
-    onTabChange: (ServiceOrderTab) -> Unit
+    selected: ServiceTab,
+    onTabChange: (ServiceTab) -> Unit
 ) {
     NavigationBar(containerColor = Color(0xFF2E584A)) {
         NavigationBarItem(
-            selected = selected == ServiceOrderTab.ORDERS,
-            onClick = { onTabChange(ServiceOrderTab.ORDERS) },
+            selected = selected == ServiceTab.ORDERS,
+            onClick = { onTabChange(ServiceTab.ORDERS) },
             icon = { Icon(Icons.Default.Menu, null) },
             label = { Text("Pedidos") },
             colors = NavigationBarItemDefaults.colors(
@@ -352,8 +359,8 @@ private fun BottomBarService(
             )
         )
         NavigationBarItem(
-            selected = selected == ServiceOrderTab.STORE,
-            onClick = { onTabChange(ServiceOrderTab.STORE) },
+            selected = selected == ServiceTab.STORE,
+            onClick = { onTabChange(ServiceTab.STORE) },
             icon = { Icon(Icons.Default.ShoppingCart, null) },
             label = { Text("Tienda") },
             colors = NavigationBarItemDefaults.colors(
