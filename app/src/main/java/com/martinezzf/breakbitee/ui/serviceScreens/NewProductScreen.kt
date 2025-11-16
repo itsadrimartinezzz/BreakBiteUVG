@@ -1,3 +1,8 @@
+/**
+ * Composable que construye la pantalla donde el restaurante crea un nuevo producto para el menu
+ */
+
+
 package com.martinezzf.breakbitee.ui.serviceScreens
 
 import androidx.compose.foundation.background
@@ -23,9 +28,11 @@ import androidx.compose.ui.unit.dp
 fun NewProductScreen(
     onBack: () -> Unit
 ) {
-    var productName by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
+
+    //Estados locales par alcamenar lo siguiente:
+    var productName by remember { mutableStateOf("") } //nombre del nuevo producto
+    var description by remember { mutableStateOf("") } //descripcion del nuevo producto
+    var price by remember { mutableStateOf("") } //Precio del nuevo producto
 
     Scaffold(
         topBar = {
@@ -188,6 +195,7 @@ fun NewProductScreen(
     }
 }
 
+//Composable para escribir
 @Composable
 private fun EditableField(
     label: String,
