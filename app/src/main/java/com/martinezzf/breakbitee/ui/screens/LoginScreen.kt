@@ -1,6 +1,10 @@
+/**
+ * Composable que construye  la pantalla de log in de la aplicacion.
+ */
+
 package com.martinezzf.breakbitee.ui.screens
 
-
+//Imports
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
