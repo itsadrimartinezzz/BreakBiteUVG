@@ -1,3 +1,8 @@
+/**
+ * El usuario ve los restaurante disponibles,
+ * tiene la navegacion de la barra inferior.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.Image
@@ -30,6 +35,7 @@ import com.martinezzf.breakbitee.ui.navegation.UserTab
 
 private val BannerGreen = Color(0xFF2E584A)
 
+//Navegacion de barra inferior (bottom bar) para navegar por Home, history y profile.
 @Composable
 fun BottomBarUser(
     selected: UserTab,
@@ -82,6 +88,7 @@ fun BottomBarUser(
     }
 }
 
+//Composable para la pantalla de UserHomeScreen.
 @Composable
 fun UserHomeScreen(
     services: List<ServiceUi>,
@@ -89,6 +96,7 @@ fun UserHomeScreen(
     selectedTab: UserTab,
     onTabChange: (UserTab) -> Unit
 ) {
+    //Variable de estado para la busqueda del restaurante disponible que desee el usuario.
     var query by remember { mutableStateOf("") }
 
     Scaffold(
@@ -158,6 +166,7 @@ fun UserHomeScreen(
     }
 }
 
+//Composable de serviceCard, presentando el restaurante.
 @Composable
 private fun ServiceCard(
     service: ServiceUi,
@@ -170,15 +179,14 @@ private fun ServiceCard(
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
     ) {
-        // 🖼 Fondo con AsyncImage (para agregar imagen de fondo)
+
         AsyncImage(
-            model = service.bannerUrl, // puedes cambiar la URL según necesites
+            model = service.bannerUrl,
             contentDescription = "${service.name} background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
 
-        // Sombra oscura para mejorar contraste
         Box(
             modifier = Modifier
                 .matchParentSize()
@@ -191,7 +199,6 @@ private fun ServiceCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Logo cuadrado del restaurante (mantiene su posición)
             AsyncImage(
                 model = service.imageUrl,
                 contentDescription = "${service.name} logo",
