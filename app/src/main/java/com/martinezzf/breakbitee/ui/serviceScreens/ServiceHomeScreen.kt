@@ -1,3 +1,7 @@
+/**
+ * Pantalla donde el restaurante administra la tienda.
+ */
+
 package com.martinezzf.breakbitee.ui.serviceScreens
 
 import androidx.compose.foundation.background
@@ -42,6 +46,7 @@ fun ServiceHomeScreen(
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
+    //Pestaña que aparece cuando pregunta si se quiere cerrar sesion.
     Scaffold(
         topBar = {
             TopAppBar(
@@ -161,6 +166,7 @@ fun ServiceHomeScreen(
     }
 }
 
+//Composable para la pantalla de ServiceHeaderFullWidth
 @Composable
 private fun ServiceHeaderFullWidth(
     header: ServiceHeaderUi,
@@ -245,6 +251,7 @@ private fun ServiceHeaderFullWidth(
     }
 }
 
+//Composable para PopularGrid
 @Composable
 private fun PopularGrid(
     products: List<ProductUi>,
@@ -284,6 +291,7 @@ private fun PopularGrid(
     }
 }
 
+//Composable para categorySection
 @Composable
 private fun CategorySection(
     category: CategoryUi,
@@ -327,6 +335,7 @@ private fun CategorySection(
     }
 }
 
+//Composable de EmptyBlock
 @Composable
 private fun EmptyBlock(text: String, modifier: Modifier = Modifier) {
     Box(
@@ -339,6 +348,7 @@ private fun EmptyBlock(text: String, modifier: Modifier = Modifier) {
     ) { Text(text, color = Color(0xFF6B7280)) }
 }
 
+//Composable de BottomBar2, (navegacion de la barra inferior).
 @Composable
 private fun BottomBar2(selected: ServiceTab, onTabChange: (ServiceTab) -> Unit) {
     NavigationBar(containerColor = Color(0xFF2E584A)) {
