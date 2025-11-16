@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.martinezzf.breakbitee.data.FakeApi
-import com.martinezzf.breakbitee.data.ServiceOrderUi     // 👈 IMPORT NUEVO
+import com.martinezzf.breakbitee.data.ServiceOrderUi
 
 //Data class UserOderitemUi
 data class UserOrderItemUi(

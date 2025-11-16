@@ -54,9 +54,7 @@ object FakeApi {
         }
     }
 
-    // -----------------------------------------------------------
-    // 🔔 NOTIFICACIONES DEL USUARIO
-    // -----------------------------------------------------------
+    //Notificaciones de usuario
 
         private val _userNotifications =
             MutableStateFlow<List<UserNotification>>(emptyList())

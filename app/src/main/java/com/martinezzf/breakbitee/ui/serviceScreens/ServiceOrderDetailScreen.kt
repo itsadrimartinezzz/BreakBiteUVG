@@ -83,7 +83,8 @@ fun ServiceOrderDetailScreen(
                             val notif = UserNotification(
                                 id = order.id,
                                 type = NotificationType.READY,
-                                message = "Tu pedido ${order.id} está listo para recoger."
+                                message = "Tu pedido ${order.id} en ${order.serviceId} está listo para recoger."
+
                             )
                             FakeApi.sendNotificationToUser(notif)
                             onComplete()
