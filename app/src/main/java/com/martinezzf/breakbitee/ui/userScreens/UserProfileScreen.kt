@@ -101,29 +101,6 @@ fun UserProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            Text("Nombre", fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    placeholder = { Text("Nombre") },
-                    modifier = Modifier.weight(1f)
-                )
-                OutlinedTextField(
-                    value = lastName,
-                    onValueChange = { lastName = it },
-                    placeholder = { Text("Apellido (s)") },
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Spacer(Modifier.height(20.dp))
-
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text("Notificaciones", fontWeight = FontWeight.Bold)
                 TextButton(onClick = onNotifications) {
