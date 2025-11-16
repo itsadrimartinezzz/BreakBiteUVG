@@ -1,18 +1,19 @@
+/**
+ * Pnatalla donde el usuario ve el detalle de un producto dentro del restaurante como la imagen, precio, descripcion.
+ */
+
 package com.martinezzf.breakbitee.ui.userScreens
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -22,9 +23,7 @@ import com.martinezzf.breakbitee.data.ProductDetailUi
 import com.martinezzf.breakbitee.data.ProductParameterUi
 import com.martinezzf.breakbitee.data.UserOrderItemUi
 
-// ------------------------------------------------------
-// BUILDER DEL ITEM QUE SE ENVÍA AL NAVIGATION
-// ------------------------------------------------------
+//Constructor para agregarlo al historial de pedidos.
 private fun construirItemDePedido(
     product: ProductDetailUi,
     quantity: Int,
@@ -40,17 +39,17 @@ private fun construirItemDePedido(
         id = product.id,
         name = product.name,
         priceQ = product.basePriceQ + extras,
-        basePriceQ = product.basePriceQ,     // 🔥 NECESARIO PARA EL NAV
+        basePriceQ = product.basePriceQ,
         imageUrl = product.imageUrl,
         quantity = quantity,
+        serviceName = product.serviceName,
+        serviceId = product.serviceName,
 
-        serviceName = product.serviceName,   // 🔥 NECESARIO PARA EL NAV
-        serviceId = product.serviceName,     // 🔥 IDENTIFICACIÓN DEL RESTAURANTE
-
-        orderId = ""                         // 🔥 SE ASIGNA EN EL NAVHOST
+        orderId = ""
     )
 }
 
+//Composable de la pantalla de informacion del producto, UserProductScreen.
 @Composable
 fun UserProductScreen(
     product: ProductDetailUi,
@@ -170,7 +169,6 @@ fun UserProductScreen(
                 )
             }
 
-            // Logo restaurante
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -225,6 +223,7 @@ fun UserProductScreen(
     }
 }
 
+//Composable para mostrar paametros en un componente (expandir/colapsar, seleccionar opciones, ver extras)
 @Composable
 private fun ParameterBlock(
     parameter: ProductParameterUi,
