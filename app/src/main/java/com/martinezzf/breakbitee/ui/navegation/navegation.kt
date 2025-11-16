@@ -1,3 +1,7 @@
+/**
+ * Navegacion de la aplicacion.
+ */
+
 package com.martinezzf.breakbitee.ui.navegation
 
 import android.annotation.SuppressLint
@@ -21,34 +25,46 @@ import com.martinezzf.breakbitee.ui.userScreens.NotificationsScreen
 import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailScreen
 import com.martinezzf.breakbitee.ui.userScreens.UserOrderDetailUi
 
-// ---------- Otros modelos locales ----------
-
+//Se utiliza para el login del restaurante, panel de pedidos del restaurante
 data class ServiceInfo(
-    val id: String,
-    val name: String,
-    val displayName: String,
-    val tag: String,
-    val logoUrl: String,
-    val password: String,
-    val backgroundUrl: String = ""
+    val id: String, //id del servicio
+    val name: String, //nombre del servicio
+    val displayName: String, //nombre visible del servicio
+    val tag: String, //identificador del servicio
+    val logoUrl: String, //logo del servicio por medio de coil
+    val password: String, //contraseña del servicio
+    val backgroundUrl: String = "" //fondo del servicio por medio de coil.
 )
 
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
+
+    //Opcion de memoria para decidir si esta en modo oscuro.
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
 
+    //Crea y recuerda el controlador de navegacion
     val nav = rememberNavController()
+
+    //Variable del nombre de usuario en la aplicacion.
     var userName by rememberSaveable { mutableStateOf("Usuario") }
+
+    //correo del usuario, tiene persistencia utilizando rememberSaveable.
     var userEmail by rememberSaveable { mutableStateOf("usuario@uvg.edu.gt") }
 
+    //Lista de pedidos del usuario
     var orders by rememberSaveable { mutableStateOf(listOf<OrderUi>()) }
+
+    //Lista de productos seleccionados del usuario
     var allItems by remember { mutableStateOf(mutableListOf<UserOrderItemUi>()) }
+
+    //Lista de notificaciones del usuario
     var notifications by remember { mutableStateOf(listOf<UserNotification>()) }
 
-    // === Restaurantes ===
+    // === Restaurantes y su informacion utilizando data class ServiceInfo ===
     val servicesInfo = remember {
         listOf(
+            //===Cafe Barista===
             ServiceInfo(
                 id = "1",
                 name = "Cafe Barista",
@@ -58,6 +74,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "barista123",
                 backgroundUrl = "https://www.prensalibre.com/wp-content/uploads/2018/09/Cafe-barista-portada.png?quality=52"
             ),
+
+            //===& Cafe===
             ServiceInfo(
                 id = "2",
                 name = "& Cafe",
@@ -67,6 +85,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "elcafe123",
                 backgroundUrl = "https://andcafe.com/media/k2/items/cache/2fa67f482133f1c934235b73c2a03954_M.jpg?t=20220418_183154"
             ),
+
+            //===Gitane===
             ServiceInfo(
                 id = "3",
                 name = "Gitane",
@@ -76,6 +96,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "gitane123",
                 backgroundUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNeJaVfchBpvb1M__tBKHT_QkZOQNgHdpDw&s"
             ),
+
+            //=== Go green===
             ServiceInfo(
                 id = "4",
                 name = "Go Green",
@@ -85,6 +107,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "gogreen123",
                 backgroundUrl = "https://static.vecteezy.com/system/resources/previews/006/224/670/non_2x/go-green-concept-banner-with-lush-green-foliage-illustration-vector.jpg"
             ),
+            //=== Panitos y algo mas===
             ServiceInfo(
                 id = "5",
                 name = "Panitos y algo mas",
@@ -94,6 +117,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "panitos123",
                 backgroundUrl = "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/14/32/b9/7b/planta-baja.jpg?w=900&h=500&s=1"
             ),
+
+            //===Mixtas Frankfurt===
             ServiceInfo(
                 id = "6",
                 name = "Mixtas Frankfurt",
@@ -103,6 +128,8 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 password = "frankfurt123",
                 backgroundUrl = "https://degusta-pictures-hd.b-cdn.net/16_100341_r_0.jpg?v=2382"
             ),
+
+            //===Golden Harvest===
             ServiceInfo(
                 id = "7",
                 name = "Golden Harvest",
@@ -115,6 +142,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
         )
     }
 
+    //Convierte la lista de ServiceInfo a ServiceUi
     val services = servicesInfo.map {
         ServiceUi(
             id = it.id,
@@ -125,21 +153,31 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
         )
     }
 
+    //Recuerda las pestañas seleccionadas en la pantalla de servicio.
     var serviceSelectedTab by rememberSaveable { mutableStateOf(ServiceOrderTab.ORDERS) }
+
+    //Guarda la informacion del servicio en la que se encuentra en ese momento.
     var currentServiceInfo by remember { mutableStateOf<ServiceInfo?>(null) }
 
+    //Genera un titulo para la pantalla de servicio basado en el servicio en el que se encuentra uno actualmente
+    //remeber para calcular el titulo cuando se cambia currentServicieInfo
     val serviceHeader = remember(currentServiceInfo) {
+        //Si el servicio esta logueado, construye un ServiceHeaderUi
         currentServiceInfo?.let {
             ServiceHeaderUi(
                 name = it.displayName,
                 tag = it.tag,
                 logoUrl = it.logoUrl
             )
-        } ?: ServiceHeaderUi(name = "Servicio", tag = "UVG", logoUrl = "")
+        } ?: ServiceHeaderUi(name = "Servicio", tag = "UVG", logoUrl = "") //Si no hay un servicio logueado, estos son los establecidos por defecto.
     }
 
+    //Guarda la lista de pedidos que el servicio recibe.
+    //Mantiene el historial de pedidos del servicio
     var serviceOrders by rememberSaveable {
+        //Estado observable, se actualiza cuando serviceOrdes cambia
         mutableStateOf(
+            //Constructor de pedidos (id, estado, cliente, usuario, total, servideId)
             listOf(
                 ServiceOrderUi("BB-2001", "Pendiente", "Usuario", 3, "Q95", serviceId = "Cafe Barista"),
                 ServiceOrderUi("BB-2002", "En preparación", "Adriana", 2, "Q62", serviceId = "Cafe Barista")
@@ -147,9 +185,12 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
         )
     }
 
+    //Funcion para comprobar que el usuario pertenece a la organizacon uvg. Identificador: @uvg.edu.gt
     fun isUvgEmail(s: String) = s.endsWith("@uvg.edu.gt", ignoreCase = true)
 
+    //Iuyecta la variable AllItems dentro del arbol de composables, esto para que las pantallas de est ebloque se pueda accedar sin pasarlo como parametro.
     CompositionLocalProvider(LocalAllItems provides allItems) {
+        //NavHost
         NavHost(navController = nav, startDestination = LoginDestination) {
 
             // === LOGIN ===
@@ -204,7 +245,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 )
             }
 
-            // === HOME (Usuarios) ===
+            // === HOME===
             composable<MainDestination> {
                 var selectedTab by rememberSaveable { mutableStateOf(UserTab.Home) }
 
@@ -383,13 +424,11 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
                 )
             }
 
-            // === VISTA ESTABLECIMIENTO (SERVICIO) ===
+            // === VISTA COMO SERVICIO===
             composable<ServiceOrdersDestination> {
 
-                // 🔥 Control interno de pantalla activa dentro de este destino
                 var mostrarNuevoProducto by remember { mutableStateOf(false) }
 
-                // Si el usuario toca la pestaña "Tienda", cambiamos la pantalla
                 LaunchedEffect(serviceSelectedTab) {
                     if (serviceSelectedTab == ServiceOrderTab.STORE) {
                         mostrarNuevoProducto = true
@@ -400,7 +439,6 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
                 if (mostrarNuevoProducto) {
 
-                    // ⭐ SE MUESTRA la pantalla de nuevo producto
                     NewProductScreen(
                         onBack = {
                             mostrarNuevoProducto = false
@@ -410,12 +448,10 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
 
                 } else {
 
-                    // 🔥 Filtrar pedidos del restaurante actual
                     val pedidosFiltrados = serviceOrders.filter { order ->
                         order.serviceId == currentServiceInfo?.name
                     }
 
-                    // ⭐ SE MUESTRA la pantalla normal de pedidos
                     ServiceOrdersScreen(
                         negocio = currentServiceInfo?.name ?: "Servicio",
                         tag = serviceHeader.tag,
@@ -442,10 +478,7 @@ fun AppNav(onToggleDarkMode: (Boolean) -> Unit) {
             }
 
 
-
-
-
-            // === DETALLE PEDIDO (SERVICIO) ===
+            // === DETALLE PEDIDO DESDE SERVICIO===
             composable<ServiceOrderDetailDestination> { entry ->
                 val args = entry.toRoute<ServiceOrderDetailDestination>()
                 val order = serviceOrders.find { it.id == args.orderId }
