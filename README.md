@@ -282,9 +282,9 @@ implementation("androidx.core:core-ktx:1.17.0")
    - Productos: Hamburguesas, Jamaica, Sushi, Club Sandwich
 
 Todos los productos incluyen:
-- Imágenes reales
+- Imágenes 
 - Descripciones
-- Precios en Quetzales
+- Precios 
 - Opciones de personalización
 
 ---
